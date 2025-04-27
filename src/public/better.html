@@ -195,6 +195,8 @@
       let lastSpeechTime = 0;
       const DUPLICATE_THRESHOLD_MS = 500; // Ignore duplicates within 500ms
       
+      // We don't directly handle state events here
+      
       // Process speech command only if it's not a duplicate
       function processSpeechCommand(text) {
         const now = Date.now();

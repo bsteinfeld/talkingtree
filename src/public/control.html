@@ -32,6 +32,120 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
+    /* Toggle switch styles */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      margin-right: 10px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: #4CAF50;
+    }
+    
+    input:focus + .toggle-slider {
+      box-shadow: 0 0 1px #4CAF50;
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(30px);
+    }
+    
+    .toggle-label {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    .toggle-description {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 2px;
+    }
+    
+    /* Specialty toggle colors */
+    .toggle-autoblink input:checked + .toggle-slider {
+      background-color: #607d8b;
+    }
+    
+    .toggle-magic input:checked + .toggle-slider {
+      background-color: #9c27b0;
+    }
+    
+    .toggle-webcam input:checked + .toggle-slider {
+      background-color: #2196F3;
+    }
+    
+    .toggle-eyesclosed input:checked + .toggle-slider {
+      background-color: #795548;
+    }
+    
+    /* Gate toggle styles */
+    .toggle-switch span.toggle-slider {
+      transition: background-color 0.4s;
+    }
+    
+    /* Gate 1 toggle (orange) */
+    #gate1Toggle:checked + .toggle-slider {
+      background-color: #ff9800;
+    }
+    
+    /* Gate 2 toggle (blue) */
+    #gate2Toggle:checked + .toggle-slider {
+      background-color: #2196F3;
+    }
+    
+    .feature-group {
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      margin-top: 15px;
+    }
+    
+    .feature-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #555;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+    
     .main-container {
       display: flex;
       flex-direction: row;
@@ -225,14 +339,68 @@
           </div>
           <div class="eye-actions">
             <p>Click and drag on the pad to move the tree's eyes.</p>
+            
             <div class="buttons">
-              <button id="blinkBtn">Blink</button>
-              <button id="closeEyesBtn" style="background-color: #795548;">Close Eyes</button>
-              <button id="toggleAutoBlinkBtn" style="background-color: #607d8b;">Auto-Blink On</button>
-              <button id="lookAroundBtn">Auto Look</button>
+              <button id="blinkBtn">Blink Now</button>
+              <button id="resetEyesBtn">Reset Eyes</button>
             </div>
-            <div class="buttons" style="margin-top: 15px;">
-              <button id="toggleMagicBtn" style="background-color: #9c27b0;">✨ Magic Glimmer</button>
+            
+            <div class="feature-group">
+              <div class="feature-title">Eye Features</div>
+              
+              <div class="toggle-container">
+                <label class="toggle-switch toggle-autoblink">
+                  <input type="checkbox" id="autoBlinkToggle" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+                <div>
+                  <div class="toggle-label">Auto Blinking</div>
+                  <div class="toggle-description">Tree blinks occasionally on its own</div>
+                  <div style="margin-top: 5px; display: flex; align-items: center;">
+                    <label for="blinkSpeed" style="font-size: 0.75rem; margin-right: 5px;">Speed:</label>
+                    <input type="range" id="blinkSpeed" min="2" max="10" value="5" style="width: 100px;">
+                    <span id="blinkSpeedValue" style="font-size: 0.75rem; margin-left: 5px;">5 sec</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="toggle-container">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="lookAroundToggle">
+                  <span class="toggle-slider"></span>
+                </label>
+                <div>
+                  <div class="toggle-label">Auto Look Around</div>
+                  <div class="toggle-description">Tree moves eyes randomly</div>
+                  <div style="margin-top: 5px; display: flex; align-items: center;">
+                    <label for="lookAroundSpeed" style="font-size: 0.75rem; margin-right: 5px;">Speed:</label>
+                    <input type="range" id="lookAroundSpeed" min="1" max="15" value="7" style="width: 100px;">
+                    <span id="lookAroundSpeedValue" style="font-size: 0.75rem; margin-left: 5px;">7 sec</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="toggle-container">
+                <label class="toggle-switch toggle-magic">
+                  <input type="checkbox" id="magicToggle">
+                  <span class="toggle-slider"></span>
+                </label>
+                <div>
+                  <div class="toggle-label">✨ Magic Glimmer</div>
+                  <div class="toggle-description">Magical sparkle effects</div>
+                </div>
+              </div>
+              
+              <div class="toggle-container">
+                <label class="toggle-switch toggle-eyesclosed">
+                  <input type="checkbox" id="eyesClosedToggle">
+                  <span class="toggle-slider"></span>
+                </label>
+                <div>
+                  <div class="toggle-label">Eyes Closed</div>
+                  <div class="toggle-description" id="eyesClosedStatus">Currently open</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -263,9 +431,28 @@
       
       <div class="control-section">
         <div class="section-title">Gate Control</div>
-        <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px; flex-wrap: wrap;">
-          <button id="toggleGateBtn" style="background-color: #ff9800; padding: 12px 25px; font-size: 16px;">Open Gate 1</button>
-          <button id="toggleGate2Btn" style="background-color: #2196F3; padding: 12px 25px; font-size: 16px;">Open Gate 2</button>
+        <div class="feature-group">
+          <div class="toggle-container">
+            <label class="toggle-switch" style="background-color: #ff9800;">
+              <input type="checkbox" id="gate1Toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <div>
+              <div class="toggle-label">Gate 1</div>
+              <div class="toggle-description" id="gate1Status">Currently closed</div>
+            </div>
+          </div>
+          
+          <div class="toggle-container">
+            <label class="toggle-switch" style="background-color: #2196F3;">
+              <input type="checkbox" id="gate2Toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <div>
+              <div class="toggle-label">Gate 2</div>
+              <div class="toggle-description" id="gate2Status">Currently closed</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -273,20 +460,27 @@
     <div class="right-column">
       <div class="control-section">
         <div class="section-title">Live View</div>
-        <div class="webcam-container" style="width: 100%; position: relative;">
+        
+        <div class="toggle-container">
+          <label class="toggle-switch toggle-webcam">
+            <input type="checkbox" id="webcamToggle">
+            <span class="toggle-slider"></span>
+          </label>
+          <div>
+            <div class="toggle-label">Camera Feed</div>
+            <div class="toggle-description" id="webcamStatus">Not connected</div>
+          </div>
+        </div>
+        
+        <div class="webcam-container" style="width: 100%; position: relative; margin-top: 10px;">
           <img id="webcamDisplay" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Webcam feed" style="width: 100%; border-radius: 5px; border: 1px solid #ddd;">
           <div id="webcamOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.7); color: white; border-radius: 5px;">
             Waiting for webcam feed...
           </div>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-          <div class="buttons">
-            <button id="toggleWebcamBtn">Start Feed</button>
-            <button id="refreshWebcamBtn">Refresh Feed</button>
-          </div>
-          <div id="webcamStatus" style="font-size: 0.9rem; color: #666;">
-            Not connected
-          </div>
+        
+        <div class="buttons" style="margin-top: 10px; display: flex; justify-content: flex-end;">
+          <button id="refreshWebcamBtn" style="background-color: #607d8b;">Refresh Feed</button>
         </div>
       </div>
     </div>
@@ -300,9 +494,7 @@
     const eyePad = document.getElementById('eyePad');
     const eyeCursor = document.getElementById('eyeCursor');
     const blinkBtn = document.getElementById('blinkBtn');
-    const toggleAutoBlinkBtn = document.getElementById('toggleAutoBlinkBtn');
-    const closeEyesBtn = document.getElementById('closeEyesBtn');
-    const lookAroundBtn = document.getElementById('lookAroundBtn');
+    const resetEyesBtn = document.getElementById('resetEyesBtn');
     const speechText = document.getElementById('speechText');
     const speakBtn = document.getElementById('speakBtn');
     const stopBtn = document.getElementById('stopBtn');
@@ -316,8 +508,6 @@
     const refreshWebcamBtn = document.getElementById('refreshWebcamBtn');
     const toggleWebcamBtn = document.getElementById('toggleWebcamBtn');
     const toggleMagicBtn = document.getElementById('toggleMagicBtn');
-    const toggleGateBtn = document.getElementById('toggleGateBtn');
-    const toggleGate2Btn = document.getElementById('toggleGate2Btn');
     
     let socket;
     let isLookingAround = false;
@@ -330,11 +520,6 @@
     let gateOpen = false;
     let gate2Open = false;
     
-    // Disable webcam toggle button initially until we know webcam is available
-    // document.addEventListener('DOMContentLoaded', () => {
-    //   toggleWebcamBtn.disabled = true;
-    // });
-    
     // Connect to Socket.IO server
     function connectSocket() {
       // Get the current page URL to handle connecting from different devices
@@ -342,8 +527,6 @@
       const host = window.location.hostname;
       const port = window.location.port ? `:${window.location.port}` : '';
       const serverUrl = `${protocol}//${host}${port}`;
-      
-      console.log(`Connecting to Socket.IO server at: ${serverUrl}`);
       
       // Connect with explicit URL and options
       socket = io(serverUrl, {
@@ -355,31 +538,31 @@
 
       // Connection established
       socket.on('connect', () => {
-        console.log('Connected to server with ID:', socket.id);
         connectionStatus.classList.add('status-connected');
         statusText.textContent = 'Connected';
         
         // Send a test message to verify connection is working
         socket.emit('test-message', { client: 'control', timestamp: Date.now() });
+        
+        // Request current tree state
+        syncInitialState();
       });
-
+      
       // Connection lost
       socket.on('disconnect', () => {
-        console.log('Disconnected from server');
         connectionStatus.classList.remove('status-connected');
         statusText.textContent = 'Disconnected';
       });
       
       // Connection error
       socket.on('connect_error', (error) => {
-        console.error('Connection error:', error);
         connectionStatus.classList.remove('status-connected');
         statusText.textContent = 'Connection Error';
       });
       
       // Command confirmation
       socket.on('command-received', (data) => {
-        console.log('Command confirmation received:', data);
+        // Command received
       });
       
       // Add a pinger to keep connection alive
@@ -389,37 +572,110 @@
         }
       }, 30000);
       
-      // Tree status updates
+      // Regular tree status updates
       socket.on('tree-status', (data) => {
-        console.log('Received tree-status event:', data);
-        
-        // If we get a webcam status, update the toggle button
+        // If we get a webcam status, update the toggle
         if (data && data.webcamReady) {
-          // Webcam is initialized but not streaming
-          toggleWebcamBtn.disabled = false;
+          // Enable webcam toggle
+          webcamToggle.disabled = false;
           
-          // If we're currently streaming, show "Stop" text, otherwise show "Start"
-          if (webcamStreamingEnabled) {
-            toggleWebcamBtn.textContent = 'Stop Feed';
-          } else {
-            toggleWebcamBtn.textContent = 'Start Feed';
-          }
+          // Set the toggle state based on current streaming status
+          webcamToggle.checked = webcamStreamingEnabled;
         }
       });
       
+      // Handle tree state events
+      const handleTreeState = (data) => {
+        updateUIFromTreeState(data);
+      };
+      
+      // Add event listeners for state event names
+      socket.on('tree-state', handleTreeState);
+      socket.on('state', handleTreeState);
+      socket.on('current-state', handleTreeState);
+      
+      // Function to update UI from state data
+      function updateUIFromTreeState(data) {
+        // Update UI based on tree's current state
+        if (data) {
+          // Update eye state
+          if (data.eyesClosed !== undefined) {
+            eyesClosed = data.eyesClosed;
+            eyesClosedToggle.checked = eyesClosed;
+            eyesClosedStatus.textContent = eyesClosed ? 'Currently closed' : 'Currently open';
+            blinkBtn.disabled = eyesClosed;
+          }
+          
+          // Update auto blink state
+          if (data.autoBlinkEnabled !== undefined) {
+            autoBlinkEnabled = data.autoBlinkEnabled;
+            autoBlinkToggle.checked = autoBlinkEnabled;
+          }
+          
+          // Update blink speed
+          if (data.blinkSpeed !== undefined) {
+            blinkSpeed.value = data.blinkSpeed;
+            blinkSpeedValue.textContent = `${data.blinkSpeed} sec`;
+          }
+          
+          // Update look around state
+          if (data.lookingAround !== undefined) {
+            isLookingAround = data.lookingAround;
+            lookAroundToggle.checked = isLookingAround;
+            
+            // Start or stop look around based on current state
+            if (isLookingAround && !lookAroundInterval) {
+              startLookAround();
+            } else if (!isLookingAround && lookAroundInterval) {
+              clearInterval(lookAroundInterval);
+              if (eyeAnimationFrame) {
+                cancelAnimationFrame(eyeAnimationFrame);
+                eyeAnimationFrame = null;
+              }
+            }
+          }
+          
+          // Update magic glimmer state
+          if (data.magicGlimmerEnabled !== undefined) {
+            magicGlimmerEnabled = data.magicGlimmerEnabled;
+            magicToggle.checked = magicGlimmerEnabled;
+          }
+          
+          // Update eye position
+          if (data.eyeX !== undefined && data.eyeY !== undefined) {
+            const x = data.eyeX;
+            const y = data.eyeY;
+            eyeCursor.style.left = `${x}%`;
+            eyeCursor.style.top = `${y}%`;
+            currentEyeX = x;
+            currentEyeY = y;
+            targetEyeX = x;
+            targetEyeY = y;
+          }
+          
+          // Update gate states
+          if (data.gate1Open !== undefined) {
+            gateOpen = data.gate1Open;
+            gate1Toggle.checked = gateOpen;
+            gate1Status.textContent = gateOpen ? 'Currently open' : 'Currently closed';
+          }
+          
+          if (data.gate2Open !== undefined) {
+            gate2Open = data.gate2Open;
+            gate2Toggle.checked = gate2Open;
+            gate2Status.textContent = gate2Open ? 'Currently open' : 'Currently closed';
+          }
+        }
+      }
+      
       // Webcam frame received
       socket.on('webcam-frame', (data) => {
-        console.log('Received webcam-frame event:', data ? 'Data present' : 'No data', 
-                  data?.frame ? `Frame length: ${data.frame.length}` : 'No frame');
-        
         if (!data || !data.frame) {
-          console.error('Invalid webcam frame data received');
           return;
         }
         
         // Update the webcam display with the received frame
         webcamDisplay.src = data.frame;
-        console.log('Updated webcam display with new frame');
         
         // Show the image and hide the overlay if this is the first frame
         if (!webcamActive) {
@@ -427,19 +683,16 @@
           webcamOverlay.style.display = 'none';
           webcamStatus.textContent = 'Connected';
           webcamStatus.style.color = '#4CAF50';
-          console.log('Webcam display activated');
           
-          // Update the button state since we're receiving frames
+          // Update the toggle state since we're receiving frames
           webcamStreamingEnabled = true;
-          toggleWebcamBtn.textContent = 'Stop Feed';
+          webcamToggle.checked = true;
         }
         
         // Update timestamp to track frame freshness
         lastFrameTimestamp = data.timestamp || Date.now();
       });
     }
-    
-    // No longer using the tree view button
     
     // Eye control pad
     eyePad.addEventListener('mousedown', startEyeControl);
@@ -485,59 +738,113 @@
     
     // Blink button
     blinkBtn.addEventListener('click', () => {
-      if (socket && socket.connected) {
+      if (socket && socket.connected && !eyesClosed) {
         socket.emit('tree-command', {
           type: 'blink'
         });
       }
     });
     
-    // Toggle Auto-Blink button
-    toggleAutoBlinkBtn.addEventListener('click', () => {
-      autoBlinkEnabled = !autoBlinkEnabled;
+    // Reset eyes button
+    resetEyesBtn.addEventListener('click', () => {
+      if (socket && socket.connected) {
+        // Center the cursor on the eye pad
+        eyeCursor.style.left = '50%';
+        eyeCursor.style.top = '50%';
+        
+        // Send command to reset eye position
+        socket.emit('tree-command', {
+          type: 'eyePosition',
+          x: 50,
+          y: 50
+        });
+        
+        // If eyes were closed, open them
+        if (eyesClosed) {
+          eyesClosed = false;
+          eyesClosedToggle.checked = false;
+          eyesClosedStatus.textContent = 'Currently open';
+          
+          socket.emit('tree-command', {
+            type: 'openEyes'
+          });
+        }
+      }
+    });
+    
+    // Auto-Blink toggle and speed control
+    const autoBlinkToggle = document.getElementById('autoBlinkToggle');
+    const blinkSpeed = document.getElementById('blinkSpeed');
+    const blinkSpeedValue = document.getElementById('blinkSpeedValue');
+    
+    // Update the blink speed value display when the slider changes
+    blinkSpeed.addEventListener('input', () => {
+      const seconds = blinkSpeed.value;
+      blinkSpeedValue.textContent = `${seconds} sec`;
       
-      // Update button text and color
-      if (autoBlinkEnabled) {
-        toggleAutoBlinkBtn.textContent = 'Auto-Blink On';
-        toggleAutoBlinkBtn.style.backgroundColor = '#607d8b';
-      } else {
-        toggleAutoBlinkBtn.textContent = 'Auto-Blink Off';
-        toggleAutoBlinkBtn.style.backgroundColor = '#9e9e9e';
+      // Send the updated blink speed to the tree if auto-blink is enabled
+      if (autoBlinkEnabled && socket && socket.connected) {
+        socket.emit('tree-command', {
+          type: 'setBlinkSpeed',
+          speed: parseInt(seconds)
+        });
+      }
+    });
+    
+    autoBlinkToggle.addEventListener('change', () => {
+      autoBlinkEnabled = autoBlinkToggle.checked;
+      
+      // If auto-blink is enabled but eyes are closed, open the eyes
+      if (autoBlinkEnabled && eyesClosed) {
+        eyesClosed = false;
+        eyesClosedToggle.checked = false;
+        eyesClosedStatus.textContent = 'Currently open';
+        
+        blinkBtn.disabled = false;
+
+        // Send command to open eyes
+        socket.emit('tree-command', {
+          type: 'openEyes'
+        });
       }
       
       // Send command to tree
       if (socket && socket.connected) {
         socket.emit('tree-command', {
           type: 'toggleAutoBlink',
-          enabled: autoBlinkEnabled
+          enabled: autoBlinkEnabled,
+          speed: parseInt(blinkSpeed.value)
         });
       }
     });
     
-    // Close/Open Eyes button
+    // Eyes closed toggle
     let eyesClosed = false;
-    closeEyesBtn.addEventListener('click', () => {
+    const eyesClosedToggle = document.getElementById('eyesClosedToggle');
+    const eyesClosedStatus = document.getElementById('eyesClosedStatus');
+    
+    eyesClosedToggle.addEventListener('change', () => {
       if (socket && socket.connected) {
-        eyesClosed = !eyesClosed;
+        eyesClosed = eyesClosedToggle.checked;
         
-        // Update button text
-        if (eyesClosed) {
-          closeEyesBtn.textContent = 'Open Eyes';
+        // Update status text
+        eyesClosedStatus.textContent = eyesClosed ? 'Currently closed' : 'Currently open';
+        
+        // Update the blink button state
+        blinkBtn.disabled = eyesClosed;
+        
+        // If eyes are closed, auto-blink should be disabled
+        if (eyesClosed && autoBlinkEnabled) {
+          autoBlinkEnabled = false;
           
-          // If eyes are closed, auto-blink should be disabled
-          if (autoBlinkEnabled) {
-            autoBlinkEnabled = false;
-            toggleAutoBlinkBtn.textContent = 'Auto-Blink Off';
-            toggleAutoBlinkBtn.style.backgroundColor = '#9e9e9e';
-            
-            // Send command to disable auto-blink
-            socket.emit('tree-command', {
-              type: 'toggleAutoBlink',
-              enabled: false
-            });
-          }
-        } else {
-          closeEyesBtn.textContent = 'Close Eyes';
+          // Update auto-blink toggle
+          document.getElementById('autoBlinkToggle').checked = false;
+          
+          // Send command to disable auto-blink
+          socket.emit('tree-command', {
+            type: 'toggleAutoBlink',
+            enabled: false
+          });
         }
         
         // Send the appropriate command
@@ -547,47 +854,115 @@
       }
     });
     
-    // Auto look around
-    lookAroundBtn.addEventListener('click', toggleLookAround);
+    // Auto look around toggle and speed control
+    const lookAroundToggle = document.getElementById('lookAroundToggle');
+    const lookAroundSpeed = document.getElementById('lookAroundSpeed');
+    const lookAroundSpeedValue = document.getElementById('lookAroundSpeedValue');
+    let currentEyeX = 50;
+    let currentEyeY = 50;
+    let targetEyeX = 50;
+    let targetEyeY = 50;
+    let eyeAnimationFrame = null;
     
-    function toggleLookAround() {
-      isLookingAround = !isLookingAround;
+    // Update the speed value display when the slider changes
+    lookAroundSpeed.addEventListener('input', () => {
+      const seconds = lookAroundSpeed.value;
+      lookAroundSpeedValue.textContent = `${seconds} sec`;
+      
+      // If we're currently looking around, restart the interval with new timing
+      if (isLookingAround) {
+        clearInterval(lookAroundInterval);
+        startLookAround();
+      }
+    });
+    
+    // Animate eye movement smoothly
+    function animateEyeMovement() {
+      // Calculate distance between current and target
+      const dx = targetEyeX - currentEyeX;
+      const dy = targetEyeY - currentEyeY;
+      
+      // If we're very close to the target, just snap to it
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+        currentEyeX = targetEyeX;
+        currentEyeY = targetEyeY;
+        eyeAnimationFrame = null;
+        return;
+      }
+      
+      // Move 5% of the way to the target each frame (easing)
+      currentEyeX += dx * 0.05;
+      currentEyeY += dy * 0.05;
+      
+      // Update cursor position
+      eyeCursor.style.left = `${currentEyeX}%`;
+      eyeCursor.style.top = `${currentEyeY}%`;
+      
+      // Send command to server
+      if (socket && socket.connected) {
+        socket.emit('tree-command', {
+          type: 'eyePosition',
+          x: currentEyeX,
+          y: currentEyeY
+        });
+      }
+      
+      // Continue animation
+      eyeAnimationFrame = requestAnimationFrame(animateEyeMovement);
+    }
+    
+    function startLookAround() {
+      // Get interval from slider (convert to milliseconds)
+      const intervalSeconds = parseInt(lookAroundSpeed.value);
+      const intervalMs = intervalSeconds * 1000;
+      
+      lookAroundInterval = setInterval(() => {
+        // Don't start new eye movement if eyes are closed
+        if (eyesClosed) return;
+        
+        // Set new random target
+        targetEyeX = Math.random() * 100;
+        targetEyeY = Math.random() * 100;
+        
+        // Start animation if not already running
+        if (!eyeAnimationFrame) {
+          eyeAnimationFrame = requestAnimationFrame(animateEyeMovement);
+        }
+        
+        // Occasionally blink, but only if auto-blinking is also enabled
+        if (Math.random() < 0.3 && !eyesClosed && autoBlinkEnabled) {
+          setTimeout(() => {
+            if (socket && socket.connected && !eyesClosed) {
+              socket.emit('tree-command', {
+                type: 'blink'
+              });
+            }
+          }, 500);
+        }
+      }, intervalMs);
+    }
+    
+    lookAroundToggle.addEventListener('change', () => {
+      isLookingAround = lookAroundToggle.checked;
       
       if (isLookingAround) {
-        lookAroundBtn.textContent = 'Stop Auto Look';
-        lookAroundInterval = setInterval(() => {
-          const randomX = Math.random() * 100;
-          const randomY = Math.random() * 100;
-          
-          // Update cursor position
-          eyeCursor.style.left = `${randomX}%`;
-          eyeCursor.style.top = `${randomY}%`;
-          
-          // Send command to server
-          if (socket && socket.connected) {
-            socket.emit('tree-command', {
-              type: 'eyePosition',
-              x: randomX,
-              y: randomY
-            });
-          }
-          
-          // Occasionally blink
-          if (Math.random() < 0.3) {
-            setTimeout(() => {
-              if (socket && socket.connected) {
-                socket.emit('tree-command', {
-                  type: 'blink'
-                });
-              }
-            }, 500);
-          }
-        }, 2000);
+        // Initialize current position to wherever the eyes currently are
+        const eyeRect = eyeCursor.getBoundingClientRect();
+        const padRect = eyePad.getBoundingClientRect();
+        currentEyeX = ((eyeRect.left + eyeRect.width/2) - padRect.left) / padRect.width * 100;
+        currentEyeY = ((eyeRect.top + eyeRect.height/2) - padRect.top) / padRect.height * 100;
+        
+        startLookAround();
       } else {
-        lookAroundBtn.textContent = 'Auto Look';
         clearInterval(lookAroundInterval);
+        
+        // Cancel any ongoing animation
+        if (eyeAnimationFrame) {
+          cancelAnimationFrame(eyeAnimationFrame);
+          eyeAnimationFrame = null;
+        }
       }
-    }
+    });
     
     // Speak button - speaks exactly what's typed without AI processing
     speakBtn.addEventListener('click', () => {
@@ -628,18 +1003,11 @@
     });
     
     // Magic glimmer toggle
-    toggleMagicBtn.addEventListener('click', () => {
+    const magicToggle = document.getElementById('magicToggle');
+    
+    magicToggle.addEventListener('change', () => {
       if (socket && socket.connected) {
-        magicGlimmerEnabled = !magicGlimmerEnabled;
-        
-        // Update button state
-        if (magicGlimmerEnabled) {
-          toggleMagicBtn.style.backgroundColor = '#673ab7';
-          toggleMagicBtn.innerHTML = '✨ Magic On';
-        } else {
-          toggleMagicBtn.style.backgroundColor = '#9c27b0';
-          toggleMagicBtn.innerHTML = '✨ Magic Glimmer';
-        }
+        magicGlimmerEnabled = magicToggle.checked;
         
         // Send command to toggle magic glimmer
         socket.emit('tree-command', {
@@ -649,14 +1017,15 @@
       }
     });
     
-    // Toggle webcam button
-    toggleWebcamBtn.addEventListener('click', () => {
+    // Webcam toggle
+    const webcamToggle = document.getElementById('webcamToggle');
+    
+    webcamToggle.addEventListener('change', () => {
       if (socket && socket.connected) {
-        webcamStreamingEnabled = !webcamStreamingEnabled;
+        webcamStreamingEnabled = webcamToggle.checked;
         
         if (webcamStreamingEnabled) {
           // Start webcam streaming
-          toggleWebcamBtn.textContent = 'Stop Feed';
           webcamOverlay.style.display = 'flex';
           webcamOverlay.textContent = 'Starting webcam feed...';
           webcamStatus.textContent = 'Starting...';
@@ -679,12 +1048,12 @@
               webcamOverlay.textContent = 'Webcam feed unavailable';
               webcamStatus.textContent = 'Failed to connect';
               webcamStatus.style.color = '#d32f2f';
+              webcamToggle.checked = false;
+              webcamStreamingEnabled = false;
             }
           }, 5000);
         } else {
           // Stop webcam streaming
-          toggleWebcamBtn.textContent = 'Start Feed';
-          
           // Send command to stop webcam
           socket.emit('tree-command', {
             type: 'webcam-control',
@@ -735,36 +1104,36 @@
       const freshnessDuration = 10000; // 10 seconds
       
       // Only check for stale frames if we're supposed to be streaming
-      if (webcamActive && now - lastFrameTimestamp > freshnessDuration) {
-      // if (webcamStreamingEnabled && webcamActive && now - lastFrameTimestamp > freshnessDuration) {
+      if (webcamStreamingEnabled && webcamActive && now - lastFrameTimestamp > freshnessDuration) {
         // Frame is stale
         webcamActive = false;
         webcamOverlay.style.display = 'flex';
         webcamOverlay.textContent = 'Webcam feed lost';
         webcamStatus.textContent = 'Connection lost';
         webcamStatus.style.color = '#d32f2f';
+        
+        // Update toggle to reflect lost connection
+        webcamToggle.checked = false;
+        webcamStreamingEnabled = false;
       }
     }
     
     // Check frame freshness periodically
     setInterval(checkFrameFreshness, 5000);
     
-    // Gate 1 toggle button
-    toggleGateBtn.addEventListener('click', async () => {
-      // Toggle gate state
-      gateOpen = !gateOpen;
+    // Gate 1 toggle switch
+    const gate1Toggle = document.getElementById('gate1Toggle');
+    const gate1Status = document.getElementById('gate1Status');
+    
+    gate1Toggle.addEventListener('change', async () => {
+      // Get the current state from the toggle
+      gateOpen = gate1Toggle.checked;
       
-      // Update button appearance
-      if (gateOpen) {
-        toggleGateBtn.textContent = 'Close Gate';
-        toggleGateBtn.style.backgroundColor = '#e53935'; // Red
-      } else {
-        toggleGateBtn.textContent = 'Open Gate';
-        toggleGateBtn.style.backgroundColor = '#ff9800'; // Orange
-      }
+      // Update status display
+      gate1Status.textContent = gateOpen ? 'Currently open' : 'Currently closed';
       
-      // Disable button during request
-      toggleGateBtn.disabled = true;
+      // Disable toggle during request
+      gate1Toggle.disabled = true;
       
       try {
         // Set the angle based on gate state
@@ -778,38 +1147,37 @@
           body: JSON.stringify({ angle })
         };
         
-        console.log(`Sending request to ${url} with angle: ${angle}`);
-        
         const response = await fetch(url, options);
         const data = await response.json();
-        console.log('Server response:', data);
         
       } catch (error) {
-        console.error('Error controlling gate:', error);
-        // Show error state
-        toggleGateBtn.style.opacity = '0.7';
+        // Restore previous state on error
+        gate1Toggle.checked = !gateOpen;
+        gateOpen = !gateOpen;
+        gate1Status.textContent = gateOpen ? 'Currently open' : 'Currently closed';
+        gate1Status.style.color = '#d32f2f';
+        setTimeout(() => {
+          gate1Status.style.color = '';
+        }, 3000);
       } finally {
-        // Re-enable button
-        toggleGateBtn.disabled = false;
+        // Re-enable toggle
+        gate1Toggle.disabled = false;
       }
     });
     
-    // Gate 2 toggle button
-    toggleGate2Btn.addEventListener('click', async () => {
-      // Toggle gate state
-      gate2Open = !gate2Open;
+    // Gate 2 toggle switch
+    const gate2Toggle = document.getElementById('gate2Toggle');
+    const gate2Status = document.getElementById('gate2Status');
+    
+    gate2Toggle.addEventListener('change', async () => {
+      // Get the current state from the toggle
+      gate2Open = gate2Toggle.checked;
       
-      // Update button appearance
-      if (gate2Open) {
-        toggleGate2Btn.textContent = 'Close Gate 2';
-        toggleGate2Btn.style.backgroundColor = '#1565C0'; // Darker blue
-      } else {
-        toggleGate2Btn.textContent = 'Open Gate 2';
-        toggleGate2Btn.style.backgroundColor = '#2196F3'; // Blue
-      }
+      // Update status display
+      gate2Status.textContent = gate2Open ? 'Currently open' : 'Currently closed';
       
-      // Disable button during request
-      toggleGate2Btn.disabled = true;
+      // Disable toggle during request
+      gate2Toggle.disabled = true;
       
       try {
         // Set the action based on gate state
@@ -823,21 +1191,30 @@
           body: JSON.stringify({ action })
         };
         
-        console.log(`Sending request to ${url} with action: ${action}`);
-        
         const response = await fetch(url, options);
         const data = await response.json();
-        console.log('Gate 2 server response:', data);
         
       } catch (error) {
-        console.error('Error controlling gate 2:', error);
-        // Show error state
-        toggleGate2Btn.style.opacity = '0.7';
+        // Restore previous state on error
+        gate2Toggle.checked = !gate2Open;
+        gate2Open = !gate2Open;
+        gate2Status.textContent = gate2Open ? 'Currently open' : 'Currently closed';
+        gate2Status.style.color = '#d32f2f';
+        setTimeout(() => {
+          gate2Status.style.color = '';
+        }, 3000);
       } finally {
-        // Re-enable button
-        toggleGate2Btn.disabled = false;
+        // Re-enable toggle
+        gate2Toggle.disabled = false;
       }
     });
+    
+    // Function to request initial state
+    function syncInitialState() {
+      if (socket && socket.connected) {
+        socket.emit('get-tree-state');
+      }
+    }
     
     // Initialize
     connectSocket();

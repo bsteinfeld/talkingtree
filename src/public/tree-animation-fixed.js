@@ -3,8 +3,8 @@ const treeAnimator = (function() {
   // Constants
   const CANVAS_WIDTH = 500;
   const CANVAS_HEIGHT = 600;
-  const BLINK_INTERVAL_MIN = 2000; // Min time between blinks in ms
-  const BLINK_INTERVAL_MAX = 6000; // Max time between blinks in ms
+  let BLINK_INTERVAL_MIN = 2000; // Min time between blinks in ms
+  let BLINK_INTERVAL_MAX = 6000; // Max time between blinks in ms
   const BLINK_DURATION = 150; // Duration of a blink in ms
   const PUPIL_MOVEMENT_RANGE = 20; // Maximum pixel range for pupil movement
   const TALKING_MOUTH_FRAME_RATE = 150; // Mouth animation frame rate in ms
@@ -69,8 +69,6 @@ const treeAnimator = (function() {
       const port = window.location.port ? `:${window.location.port}` : '';
       const serverUrl = `${protocol}//${host}${port}`;
       
-      console.log(`Connecting to Socket.IO server at: ${serverUrl}`);
-      
       // Connect with explicit URL and options
       socket = io(serverUrl, {
         transports: ['websocket', 'polling'],
@@ -81,14 +79,14 @@ const treeAnimator = (function() {
 
       // Connection established
       socket.on('connect', () => {
-        console.log('Tree connected to socket server with ID:', socket.id);
         socket.emit('test-message', { client: 'better-tree', timestamp: Date.now() });
+        
+        // Set up state listeners once connected
+        setupStateListeners();
       });
 
       // Handle tree control commands
       socket.on('tree-update', (command) => {
-        console.log('Received tree command:', command);
-        
         if (command.type === 'eyePosition') {
           // Update eye position (normalize from 0-100 to -1 to 1)
           const xPercent = (command.x / 50) - 1;
@@ -110,11 +108,33 @@ const treeAnimator = (function() {
         else if (command.type === 'toggleAutoBlink') {
           // Toggle automatic blinking
           toggleAutoBlink(command.enabled);
+          
+          // Update blink speed if provided
+          if (command.speed !== undefined) {
+            setBlinkSpeed(command.speed);
+          }
+        }
+        else if (command.type === 'setBlinkSpeed') {
+          // Set the blink speed
+          setBlinkSpeed(command.speed);
         }
         else if (command.type === 'toggleMagic') {
           // Toggle magic glimmer effect
           toggleMagicGlimmer(command.enabled);
         }
+      });
+      
+      // Direct state request handlers
+      socket.on('get-tree-state', () => {
+        sendTreeState();
+      });
+      
+      socket.on('get-state', () => {
+        sendTreeState();
+      });
+      
+      socket.on('request-state', () => {
+        sendTreeState();
       });
       
       // Add a pinger to keep connection alive
@@ -125,6 +145,33 @@ const treeAnimator = (function() {
       }, 30000);
     } catch (error) {
       console.error('Error setting up socket:', error);
+    }
+  }
+  
+  // Helper function to send current tree state
+  function sendTreeState() {
+    if (leftEyelid && rightEyelid) {
+      // Get accurate state from the current tree
+      const state = {
+        eyesClosed: leftEyelid.texture === leftEyelid.closedTexture,
+        autoBlinkEnabled: autoBlinkEnabled,
+        lookingAround: false, // We don't track this internally 
+        magicGlimmerEnabled: magicEnabled,
+        eyeX: 50, // Default center position
+        eyeY: 50 
+      };
+      
+      socket.emit('tree-state', state);
+    } else {
+      // Send a basic state with defaults
+      socket.emit('tree-state', {
+        eyesClosed: false,
+        autoBlinkEnabled: true,
+        lookingAround: false,
+        magicGlimmerEnabled: false,
+        eyeX: 50,
+        eyeY: 50
+      });
     }
   }
   
@@ -242,7 +289,6 @@ const treeAnimator = (function() {
         mouth.y = treeBody.y + treeBody.texture.height * 0.2 * treeBody.scale.y + 20;
         // mouth.scale.set(0.3 * treeBody.scale.x);
         mouth.scale.set(0.8 * treeBody.scale.x);
-        console.log('Mouth repositioned at:', mouth.x, mouth.y, 'with scale:', mouth.scale.x, mouth.scale.y);
       }
     });
   }
@@ -344,10 +390,6 @@ const treeAnimator = (function() {
     // Just a small amount of transparency - no filters
     mouth.alpha = 0.85;
     
-    // Log for debugging
-    console.log('Mouth created at:', mouth.x, mouth.y, 'with scale:', mouth.scale.x, mouth.scale.y);
-    console.log('Mouth width/height:', mouth.width, mouth.height);
-    
     // Add to stage
     app.stage.addChild(mouth);
   }
@@ -367,6 +409,23 @@ const treeAnimator = (function() {
 
     rightPupil.x = rightBaseX + xPercent * PUPIL_MOVEMENT_RANGE * treeBody.scale.x - rightEyelid.width/15;
     rightPupil.y = rightBaseY + yPercent * PUPIL_MOVEMENT_RANGE * treeBody.scale.y + rightEyelid.height/15;
+  }
+  
+  // Set the blink speed (in seconds)
+  function setBlinkSpeed(seconds) {
+    // Convert seconds to milliseconds
+    const speedMs = seconds * 1000;
+    
+    // Set min and max blink intervals
+    // Min = speed/2, Max = speed*1.5
+    BLINK_INTERVAL_MIN = speedMs / 2;
+    BLINK_INTERVAL_MAX = speedMs * 1.5;
+    
+    // Reschedule next blink with new timing
+    if (autoBlinkEnabled && blinkTimeoutId) {
+      clearTimeout(blinkTimeoutId);
+      scheduleNextBlink();
+    }
   }
   
   // Toggle auto-blink functionality
@@ -498,8 +557,6 @@ const treeAnimator = (function() {
     
     try {
       if (magicEnabled) {
-        console.log('Magic glimmer enabled');
-        
         // Create textures if they don't exist yet
         if (!particleTextures) {
           particleTextures = createParticleTextures();
@@ -510,7 +567,6 @@ const treeAnimator = (function() {
           app.stage.addChild(magicContainer);
         }
       } else {
-        console.log('Magic glimmer disabled');
         // Clear all particles
         while (magicContainer.children.length > 0) {
           const particle = magicContainer.children[0];
@@ -823,6 +879,86 @@ const treeAnimator = (function() {
     }
   }
   
+  // Handle state requests directly
+  function handleStateRequest() {
+    // Return current state as an object
+    return {
+      eyesClosed: leftEyelid && leftEyelid.texture === leftEyelid.closedTexture,
+      autoBlinkEnabled: autoBlinkEnabled,
+      lookingAround: false, // We don't track this internally
+      magicGlimmerEnabled: magicEnabled,
+      eyeX: 50, // Default center position
+      eyeY: 50,
+      blinkSpeed: Math.round(BLINK_INTERVAL_MAX / 1500) // Convert back to seconds for UI
+    };
+  }
+  
+  // Add socket listeners for state requests
+  function setupStateListeners() {
+    if (!socket || !socket.connected) return;
+    
+    // Handle state requests
+    socket.on('get-tree-state', () => {
+      const state = handleStateRequest();
+      socket.emit('tree-state', state);
+    });
+    
+    // Also handle alternate event names
+    socket.on('get-state', () => {
+      const state = handleStateRequest();
+      socket.emit('tree-state', state);
+    });
+    
+    socket.on('request-state', () => {
+      const state = handleStateRequest();
+      socket.emit('tree-state', state);
+    });
+    
+    // Also handle special commands 
+    socket.on('tree-update', (command) => {
+      if (command.type === 'getState') {
+        const state = handleStateRequest();
+        socket.emit('tree-state', state);
+      }
+      else if (command.type === 'initState') {
+        // Apply state changes from command
+        if (command.autoBlinkEnabled !== undefined) {
+          toggleAutoBlink(command.autoBlinkEnabled);
+        }
+        if (command.eyesClosed !== undefined) {
+          if (command.eyesClosed) {
+            closeEyes();
+          } else {
+            openEyes();
+          }
+        }
+        if (command.magicGlimmerEnabled !== undefined) {
+          toggleMagicGlimmer(command.magicGlimmerEnabled);
+        }
+        if (command.eyeX !== undefined && command.eyeY !== undefined) {
+          // Convert from 0-100 to -1,1 range
+          const x = (command.eyeX / 50) - 1;
+          const y = (command.eyeY / 50) - 1;
+          movePupils(x, y);
+        }
+        
+        // Then send updated state back
+        const state = handleStateRequest();
+        socket.emit('tree-state', state);
+      }
+    });
+  }
+  
+  // Set up state listeners after socket is connected
+  setupStateListeners();
+  
+  // Expose internal state and methods for access from outside
+  const _internal = {
+    autoBlinkEnabled,
+    magicEnabled,
+    assetsLoaded
+  };
+  
   // Public API
   return {
     startTalking,
@@ -832,7 +968,10 @@ const treeAnimator = (function() {
     openEyes,
     movePupils,
     toggleAutoBlink,
+    setBlinkSpeed,
     toggleMagicGlimmer,
-    destroy
+    destroy,
+    handleStateRequest,
+    _internal
   };
 })();
