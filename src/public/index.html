@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talking Tree</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #87ceeb, #3a8ebc);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+    }
+    
+    .container {
+      text-align: center;
+      position: relative;
+    }
+    
+    .tree-container {
+      width: 400px;
+      height: 500px;
+      position: relative;
+    }
+    
+    .ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 20%;
+      background: linear-gradient(to bottom, #8B4513, #654321);
+      border-radius: 50% 50% 0 0;
+      z-index: 1;
+    }
+    
+    .grass {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30px;
+      background: linear-gradient(to bottom, #228B22, #006400);
+      border-radius: 50% 50% 0 0;
+      z-index: 2;
+    }
+    
+    .tree-trunk {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 250px;
+      background: linear-gradient(to right, #8B4513, #A0522D, #8B4513);
+      border-radius: 20px 20px 40px 40px;
+      z-index: 3;
+    }
+    
+    .tree-face {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 100px;
+      z-index: 4;
+    }
+    
+    .eye {
+      position: absolute;
+      width: 20px;
+      height: 30px;
+      background-color: white;
+      border-radius: 50%;
+      top: 20px;
+      border: 2px solid #333;
+      overflow: hidden;
+    }
+    
+    .eye-left {
+      left: 15px;
+    }
+    
+    .eye-right {
+      right: 15px;
+    }
+    
+    .pupil {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #333;
+      border-radius: 50%;
+      top: 10px;
+      left: 5px;
+      transition: all 0.2s ease;
+    }
+    
+    .eyelid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #8B4513;
+      top: -100%;
+      left: 0;
+      border-radius: 50%;
+      z-index: 5;
+    }
+    
+    .mouth {
+      position: absolute;
+      width: 40px;
+      height: 5px;
+      background-color: #333;
+      border-radius: 5px;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: all 0.3s ease;
+    }
+    
+    .mouth.talking {
+      height: 20px;
+      border-radius: 10px;
+    }
+    
+    .tree-top {
+      position: absolute;
+      bottom: 260px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(#228B22, #006400);
+      border-radius: 50%;
+      z-index: 3;
+    }
+    
+    .tree-top-2 {
+      position: absolute;
+      bottom: 300px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(#32CD32, #228B22);
+      border-radius: 50%;
+      z-index: 3;
+    }
+    
+    .tree-top-3 {
+      position: absolute;
+      bottom: 340px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(#7CFC00, #32CD32);
+      border-radius: 50%;
+      z-index: 3;
+    }
+
+    .controls {
+      margin-top: 30px;
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    input {
+      width: 70%;
+      padding: 8px;
+      margin-right: 10px;
+      border: 2px solid #3a8ebc;
+      border-radius: 5px;
+    }
+    
+    button {
+      padding: 8px 15px;
+      background-color: #228B22;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #006400;
+    }
+
+    .cloud {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: drift linear infinite;
+      opacity: 0.8;
+    }
+    
+    .cloud1 {
+      width: 100px;
+      height: 60px;
+      top: 100px;
+      left: -100px;
+      animation-duration: 30s;
+    }
+    
+    .cloud2 {
+      width: 140px;
+      height: 70px;
+      top: 50px;
+      left: -140px;
+      animation-duration: 35s;
+    }
+    
+    @keyframes drift {
+      from {
+        left: -150px;
+      }
+      to {
+        left: 100%;
+      }
+    }
+
+    @keyframes blink {
+      0%, 95%, 100% {
+        top: -100%;
+      }
+      97% {
+        top: 0;
+      }
+    }
+
+    .bird {
+      position: absolute;
+      font-size: 20px;
+      animation: fly 15s linear infinite;
+    }
+
+    @keyframes fly {
+      0% {
+        left: -50px;
+        top: 100px;
+      }
+      100% {
+        left: calc(100% + 50px);
+        top: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="bird">🐦</div>
+    
+    <div class="tree-container">
+      <div class="tree-top"></div>
+      <div class="tree-top-2"></div>
+      <div class="tree-top-3"></div>
+      <div class="tree-trunk">
+        <div class="tree-face">
+          <div class="eye eye-left">
+            <div class="pupil"></div>
+            <div class="eyelid"></div>
+          </div>
+          <div class="eye eye-right">
+            <div class="pupil"></div>
+            <div class="eyelid"></div>
+          </div>
+          <div class="mouth"></div>
+        </div>
+      </div>
+      <div class="ground"></div>
+      <div class="grass"></div>
+    </div>
+    
+    <div class="controls">
+      <input type="text" id="speechInput" placeholder="Enter what the tree should say...">
+      <button id="speakButton">Speak</button>
+    </div>
+  </div>
+
+  <script>
+    // DOM elements
+    const leftEye = document.querySelector('.eye-left .pupil');
+    const rightEye = document.querySelector('.eye-right .pupil');
+    const leftEyelid = document.querySelector('.eye-left .eyelid');
+    const rightEyelid = document.querySelector('.eye-right .eyelid');
+    const mouth = document.querySelector('.mouth');
+    const speechInput = document.getElementById('speechInput');
+    const speakButton = document.getElementById('speakButton');
+    let audioElement = null;
+
+    // Eyes blinking animation
+    function startBlinking() {
+      setInterval(() => {
+        leftEyelid.style.animation = 'blink 3s infinite';
+        rightEyelid.style.animation = 'blink 3s infinite';
+      }, 500);
+    }
+
+    // Eyes movement
+    function moveEyes() {
+      document.addEventListener('mousemove', (e) => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // Calculate eye movement (limited range)
+        const eyeXPercent = Math.min(Math.max((mouseX / windowWidth) * 100, 20), 80);
+        const eyeYPercent = Math.min(Math.max((mouseY / windowHeight) * 100, 20), 80);
+        
+        // Apply movement
+        leftEye.style.left = `${(eyeXPercent - 50) * 0.1 + 5}px`;
+        rightEye.style.left = `${(eyeXPercent - 50) * 0.1 + 5}px`;
+        
+        leftEye.style.top = `${(eyeYPercent - 50) * 0.1 + 10}px`;
+        rightEye.style.top = `${(eyeYPercent - 50) * 0.1 + 10}px`;
+      });
+    }
+
+    // Animate mouth when talking
+    function animateMouth(talking) {
+      if (talking) {
+        let isOpen = false;
+        mouth.mouthInterval = setInterval(() => {
+          isOpen = !isOpen;
+          mouth.classList.toggle('talking', isOpen);
+        }, 200);
+      } else {
+        clearInterval(mouth.mouthInterval);
+        mouth.classList.remove('talking');
+      }
+    }
+
+    // Make the tree speak
+    function makeTreeSpeak(text) {
+      // Stop any current speech
+      if (audioElement) {
+        audioElement.pause();
+        audioElement = null;
+      }
+      
+      if (!text) {
+        text = 'Hello, I\'m a talking tree';
+      }
+      
+      // Show loading state
+      const speakButton = document.getElementById('speakButton');
+      const originalButtonText = speakButton.innerText;
+      speakButton.innerText = 'Thinking...';
+      speakButton.disabled = true;
+      
+      // Start animating the mouth
+      animateMouth(true);
+      
+      // Create audio element - WatsonX will generate a response based on the user's input
+      audioElement = new Audio(`/api/speak?words=${encodeURIComponent(text)}`);
+      
+      audioElement.onended = () => {
+        animateMouth(false);
+        speakButton.innerText = originalButtonText;
+        speakButton.disabled = false;
+      };
+      
+      // If server-side TTS fails, use browser's built-in speech synthesis as fallback
+      audioElement.onerror = (e) => {
+        console.log('Server TTS failed, using browser speech synthesis as fallback', e);
+        
+        // Check if we got a JSON response with browser speech fallback
+        fetch(`/api/speak?words=${encodeURIComponent(text)}`)
+          .then(response => {
+            // Check if we got JSON (error) or binary (audio)
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              return response.json();
+            } else {
+              throw new Error('Unexpected response format');
+            }
+          })
+          .then(data => {
+            if (data.useBrowserSpeech && data.text) {
+              useBrowserSpeechSynthesis(data.text);
+            } else {
+              // Try to get AI response for fallback
+              return fetch(`/api/chat`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: text }),
+              });
+            }
+          })
+          .then(response => {
+            if (response && response.json) {
+              return response.json();
+            }
+          })
+          .then(data => {
+            if (data && data.response) {
+              useBrowserSpeechSynthesis(data.response);
+            } else {
+              useBrowserSpeechSynthesis(text);
+            }
+          })
+          .catch(err => {
+            console.error('Error with speech fallback:', err);
+            useBrowserSpeechSynthesis(text);
+          })
+          .finally(() => {
+            speakButton.innerText = originalButtonText;
+            speakButton.disabled = false;
+          });
+      };
+      
+      audioElement.play().catch(error => {
+        console.error('Error playing audio:', error);
+        speakButton.innerText = originalButtonText;
+        speakButton.disabled = false;
+      });
+    }
+    
+    // Fallback to browser's built-in speech synthesis
+    function useBrowserSpeechSynthesis(text) {
+      if ('speechSynthesis' in window) {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        // Create a new speech utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Set properties for tree-like voice
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;  // Slightly slower rate for a wise tree
+        utterance.pitch = 1.2; // Slightly higher pitch for a friendly tree
+        
+        // Event handlers
+        utterance.onstart = () => {
+          console.log('Browser speech started');
+        };
+        
+        utterance.onend = () => {
+          console.log('Browser speech ended');
+          animateMouth(false);
+        };
+        
+        utterance.onerror = (event) => {
+          console.error('Browser speech error:', event.error);
+          animateMouth(false);
+        };
+        
+        // Speak the text
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.error('Browser speech synthesis not supported');
+        animateMouth(false);
+      }
+    }
+
+    // Initialize
+    function init() {
+      startBlinking();
+      moveEyes();
+      
+      // Check URL for words parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const wordsParam = urlParams.get('words');
+      
+      if (wordsParam) {
+        speechInput.value = wordsParam;
+        makeTreeSpeak(wordsParam);
+      } else {
+        // Default greeting
+        setTimeout(() => {
+          makeTreeSpeak('Hello, I\'m a talking tree');
+        }, 1000);
+      }
+      
+      // Speak button click handler
+      speakButton.addEventListener('click', () => {
+        makeTreeSpeak(speechInput.value);
+      });
+      
+      // Enter key handler
+      speechInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          makeTreeSpeak(speechInput.value);
+        }
+      });
+    }
+
+    // Start everything when page loads
+    window.onload = init;
+  </script>
+</body>
+</html>

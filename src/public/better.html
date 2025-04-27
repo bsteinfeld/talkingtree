@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talking Tree - Better Version</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: transparent;
+      overflow: hidden;
+    }
+    
+    .container {
+      text-align: center;
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+    
+    #treeCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    #interactionOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      text-align: center;
+    }
+    
+    .overlay-content {
+      background-color: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 80%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+    
+    .overlay-content h2 {
+      margin-top: 0;
+      color: #4CAF50;
+    }
+    
+    #startButton {
+      padding: 15px 30px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    #startButton:hover {
+      background-color: #3e8e41;
+    }
+    
+    /* Hide webcam video element but keep it active */
+    #webcam {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0.01;
+      pointer-events: none;
+    }
+    
+    /* Canvas for processing the webcam feed */
+    #webcamCanvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="treeCanvas"></div>
+    
+    <!-- Initial overlay for user interaction -->
+    <div id="interactionOverlay">
+      <div class="overlay-content">
+        <h2>Talking Tree</h2>
+        <p>This tree speaks with AI-powered voice.</p>
+        <p>Browser security requires user interaction before audio can play.</p>
+        <p><strong>Click the button below to enable audio and webcam:</strong></p>
+        <button id="startButton">Enable Tree Audio and Camera</button>
+      </div>
+    </div>
+    
+    <!-- Hidden video element for webcam -->
+    <video id="webcam" autoplay playsinline></video>
+    
+    <!-- Hidden canvas for processing images -->
+    <canvas id="webcamCanvas"></canvas>
+  </div>
+
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Import PixiJS from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
+  <script src="https://unpkg.com/@pixi/unsafe-eval@7.x/dist/unsafe-eval.min.js"></script>
+  
+
+  
+
+  
+  <script  src="./tree-animation-fixed.js"></script>
+  
+  
+
+  <!-- Demo script -->
+  <script>
+    console.log("Setup");
+    
+    // import { treeAnimator } from './tree-animation-fixed.js';
+
+    // Apply the patch to PIXI
+    // import '@pixi/unsafe-eval';
+
+    let audioElement = null;
+    let socket = null;
+    let audioInitialized = false;
+    let webcamInitialized = false;
+    let pendingMessages = [];
+    
+    // User interaction overlay
+    const interactionOverlay = document.getElementById('interactionOverlay');
+    const startButton = document.getElementById('startButton');
+    const webcamVideo = document.getElementById('webcam');
+    const webcamCanvas = document.getElementById('webcamCanvas');
+    const webcamContext = webcamCanvas.getContext('2d');
+    
+    // Webcam frame capturing variables
+    let isCapturingFrames = false;
+    let captureInterval = null;
+    const CAPTURE_INTERVAL_MS = 200; // Send a frame every 200ms (~5fps)
+    const MAX_DIMENSION = 320; // Limit frame size for bandwidth reasons
+    const JPEG_QUALITY = 0.6; // Balance between quality and size
+
+    // Connect to Socket.IO
+    function setupSocket() {
+      // Get the current page URL to handle connecting from different devices
+      const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+      const host = window.location.hostname;
+      const port = window.location.port ? `:${window.location.port}` : '';
+      const serverUrl = `${protocol}//${host}${port}`;
+      
+      console.log(`Connecting to Socket.IO server at: ${serverUrl}`);
+      
+      socket = io(serverUrl, {
+        transports: ['websocket', 'polling']
+      });
+
+      // Track the last spoken message to avoid duplicates
+      let lastSpeechText = '';
+      let lastSpeechTime = 0;
+      const DUPLICATE_THRESHOLD_MS = 500; // Ignore duplicates within 500ms
+      
+      // Process speech command only if it's not a duplicate
+      function processSpeechCommand(text) {
+        const now = Date.now();
+        
+        // Check if this is a duplicate message (same text within threshold time)
+        if (text === lastSpeechText && now - lastSpeechTime < DUPLICATE_THRESHOLD_MS) {
+          console.log('Ignoring duplicate speech command:', text);
+          return;
+        }
+        
+        // Update tracking info
+        lastSpeechText = text;
+        lastSpeechTime = now;
+        
+        // If audio is not initialized, store the command for later
+        if (!audioInitialized) {
+          console.log('Audio not initialized yet, queuing speech');
+          pendingMessages.push({type: 'speak', text: text});
+          // Flash the overlay to prompt user interaction
+          interactionOverlay.style.backgroundColor = 'rgba(255,0,0,0.3)';
+          setTimeout(() => {
+            interactionOverlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
+          }, 300);
+        } else {
+          makeTreeSpeak(text);
+        }
+      }
+      
+      // Listen for speak commands from multiple formats
+      socket.on('speak', (data) => {
+        console.log('Received speak event:', data);
+        if (data && data.words) {
+          processSpeechCommand(data.words);
+        }
+      });
+      
+      // Also listen for tree-update commands that contain speak instructions
+      socket.on('tree-update', (command) => {
+        console.log('Received tree-update command:', command);
+        if (command && command.type === 'speak' && command.text) {
+          processSpeechCommand(command.text);
+        }
+      });
+      
+      // Add a pinger to keep connection alive
+      setInterval(() => {
+        if (socket && socket.connected) {
+          socket.emit('ping', { timestamp: Date.now() });
+        }
+      }, 30000);
+      
+      // Listen for webcam control commands
+      socket.on('webcam-control', (command) => {
+        if (command.action === 'start' && webcamInitialized && !isCapturingFrames) {
+          startCaptureFrames();
+        } else if (command.action === 'stop' && isCapturingFrames) {
+          stopCaptureFrames();
+        }
+      });
+      
+      // Listen for tree commands that affect webcam
+      socket.on('tree-update', (command) => {
+        console.log('Received tree command:', command);
+        
+        if (command.type === 'webcam-refresh' && webcamInitialized) {
+          console.log('Received webcam refresh request');
+          // Send one frame immediately
+          captureAndSendFrame();
+        }
+        else if (command.type === 'webcam-control') {
+          console.log('Received webcam control command:', command.action);
+          
+          if (command.action === 'start' && webcamInitialized && !isCapturingFrames) {
+            console.log('Starting webcam frame capture');
+            startCaptureFrames();
+            // Send one frame immediately to show connection is working
+            setTimeout(captureAndSendFrame, 100);
+          } 
+          else if (command.action === 'stop' && isCapturingFrames) {
+            console.log('Stopping webcam frame capture');
+            stopCaptureFrames();
+          }
+        }
+      });
+    }
+    
+    // Setup webcam access
+    async function setupWebcam() {
+      console.log('Setting up webcam...');
+      try {
+        console.log('Requesting webcam access...');
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            facingMode: 'user'
+          },
+          audio: false
+        });
+        
+        console.log('Webcam access granted, setting up video element');
+        webcamVideo.srcObject = stream;
+        
+        // Wait for video to be ready
+        await new Promise(resolve => {
+          webcamVideo.onloadedmetadata = () => {
+            console.log('Video metadata loaded');
+            resolve();
+          };
+        });
+        
+        // Set canvas size to match video, respecting max dimensions
+        const videoWidth = webcamVideo.videoWidth;
+        const videoHeight = webcamVideo.videoHeight;
+        console.log(`Video dimensions: ${videoWidth}x${videoHeight}`);
+        
+        // Calculate scaling to maintain aspect ratio while limiting size
+        let scale = 1;
+        if (videoWidth > MAX_DIMENSION || videoHeight > MAX_DIMENSION) {
+          scale = Math.min(MAX_DIMENSION / videoWidth, MAX_DIMENSION / videoHeight);
+          console.log(`Scaling video by factor of ${scale}`);
+        }
+        
+        webcamCanvas.width = videoWidth * scale;
+        webcamCanvas.height = videoHeight * scale;
+        
+        console.log(`Webcam initialized: ${webcamCanvas.width}x${webcamCanvas.height}`);
+        webcamInitialized = true;
+        
+        // Don't automatically start sending frames
+        // Just send a status update to let control panel know we're ready
+        socket.emit('tree-status', {
+          webcamReady: true,
+          timestamp: Date.now()
+        });
+        
+        return true;
+      } catch (error) {
+        console.error('Error initializing webcam:', error);
+        webcamInitialized = false;
+        return false;
+      }
+    }
+    
+    // Capture and send frames
+    function startCaptureFrames() {
+      if (!webcamInitialized || isCapturingFrames) return;
+      
+      isCapturingFrames = true;
+      console.log('Starting webcam frame capture');
+      
+      captureInterval = setInterval(() => {
+        captureAndSendFrame();
+      }, CAPTURE_INTERVAL_MS);
+    }
+    
+    // Stop sending frames
+    function stopCaptureFrames() {
+      if (!isCapturingFrames) return;
+      
+      console.log('Stopping webcam frame capture');
+      clearInterval(captureInterval);
+      isCapturingFrames = false;
+    }
+    
+    // Capture and send a single frame
+    function captureAndSendFrame() {
+      console.log('captureAndSendFrame called, webcamInitialized:', webcamInitialized, 'socket connected:', socket?.connected);
+      
+      if (!webcamInitialized || !socket || !socket.connected) {
+        console.log('Skipping frame capture - prerequisites not met');
+        return;
+      }
+      
+      try {
+        // Draw video frame to canvas
+        webcamContext.drawImage(
+          webcamVideo, 
+          0, 0, 
+          webcamCanvas.width, 
+          webcamCanvas.height
+        );
+        
+        // Get data URL with reduced quality
+        const frameDataUrl = webcamCanvas.toDataURL('image/jpeg', JPEG_QUALITY);
+        console.log('Frame captured, data URL length:', frameDataUrl.length);
+        
+        // Send frame to control panel
+        socket.emit('webcam-frame', {
+          frame: frameDataUrl,
+          timestamp: Date.now()
+        });
+        console.log('Frame sent via socket.io');
+      } catch (error) {
+        console.error('Error capturing webcam frame:', error);
+      }
+    }
+
+    // Flag to track if we're currently speaking
+    let isSpeaking = false;
+    
+    // Make the tree speak
+    function makeTreeSpeak(text) {
+      console.log('Tree speaking:', text);
+      
+      // If already speaking, first stop current speech and animation
+      if (isSpeaking) {
+        // Stop mouth animation immediately
+        treeAnimator.stopTalking();
+        
+        // Stop any current audio
+        if (audioElement) {
+          try {
+            audioElement.onended = null; // Remove event listener
+            audioElement.pause();
+            audioElement.src = ''; // Clear source to stop loading
+          } catch (e) {
+            console.warn('Error stopping previous audio:', e);
+          }
+          audioElement = null;
+        }
+        
+        // Wait a moment to ensure everything is stopped
+        setTimeout(() => {
+          // Now start the new speech
+          startSpeech(text);
+        }, 200);
+      } else {
+        // Not speaking, so just start directly
+        startSpeech(text);
+      }
+    }
+    
+    // Actual speech starting function
+    function startSpeech(text) {
+      isSpeaking = true;
+      
+      // We'll use fetch first to properly get the audio to avoid race conditions
+      console.log('Fetching speech audio for:', text);
+      
+      fetch(`/api/speak?words=${encodeURIComponent(text)}`)
+        .then(response => {
+          // Check if we got audio or JSON
+          const contentType = response.headers.get('content-type');
+          
+          if (contentType && (contentType.includes('audio/') || contentType.includes('application/octet-stream'))) {
+            // We got audio data, convert to blob
+            return response.blob().then(blob => {
+              const audioUrl = URL.createObjectURL(blob);
+              
+              // Create and play audio with the blob URL
+              audioElement = new Audio(audioUrl);
+              
+              // Only start mouth animation when audio actually starts playing
+              audioElement.onplay = () => {
+                console.log('Audio playback started - starting mouth animation');
+                treeAnimator.startTalking();
+              };
+              
+              // When audio ends, clean up
+              audioElement.onended = () => {
+                console.log('Audio playback ended');
+                URL.revokeObjectURL(audioUrl); // Clean up the blob URL
+                treeAnimator.stopTalking();
+                isSpeaking = false;
+              };
+              
+              // Handle errors
+              audioElement.onerror = (e) => {
+                console.log('Error playing fetched audio, falling back to browser speech', e);
+                URL.revokeObjectURL(audioUrl);
+                useBrowserSpeechSynthesis(text);
+              };
+              
+              // Play the audio
+              return audioElement.play();
+            });
+          } else if (contentType && contentType.includes('application/json')) {
+            // We got JSON (likely an error), parse it
+            return response.json().then(data => {
+              if (data.useBrowserSpeech && data.text) {
+                useBrowserSpeechSynthesis(data.text);
+              } else {
+                useBrowserSpeechSynthesis(text);
+              }
+              throw new Error('Using browser speech synthesis instead');
+            });
+          } else {
+            throw new Error('Unexpected response format');
+          }
+        })
+        .catch(error => {
+          // Handle any errors in the fetch process
+          console.log('Error fetching speech, using browser fallback:', error);
+          
+          // Try AI chat response as another fallback
+          fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: text }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data && data.response) {
+              useBrowserSpeechSynthesis(data.response);
+            } else {
+              useBrowserSpeechSynthesis(text);
+            }
+          })
+          .catch(err => {
+            console.error('Error with AI chat fallback:', err);
+            useBrowserSpeechSynthesis(text);
+          });
+        });
+    }
+    
+    // Fallback to browser's built-in speech synthesis
+    function useBrowserSpeechSynthesis(text) {
+      if ('speechSynthesis' in window) {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        // Update state
+        isSpeaking = true;
+        
+        // Create a new speech utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Set properties for tree-like voice
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;  // Slightly slower rate for a wise tree
+        utterance.pitch = 1.2; // Slightly higher pitch for a friendly tree
+        
+        // Event handlers
+        utterance.onstart = () => {
+          console.log('Browser speech started');
+          // Start mouth animation only when speech actually starts
+          treeAnimator.startTalking();
+        };
+        
+        utterance.onend = () => {
+          console.log('Browser speech ended');
+          isSpeaking = false;
+          treeAnimator.stopTalking();
+        };
+        
+        utterance.onerror = (event) => {
+          console.error('Browser speech error:', event.error);
+          isSpeaking = false;
+          treeAnimator.stopTalking();
+        };
+        
+        // Speak the text
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.error('Browser speech synthesis not supported');
+        isSpeaking = false;
+        treeAnimator.stopTalking();
+      }
+    }
+
+    // Direct API for URL parameters
+    function checkUrlForSpeechCommand() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const wordsParam = urlParams.get('words');
+      
+      if (wordsParam) {
+        if (!audioInitialized) {
+          pendingMessages.push({type: 'speak', text: wordsParam});
+        } else {
+          makeTreeSpeak(wordsParam);
+        }
+      }
+    }
+    
+    // Initialize audio with user interaction
+    async function initializeAudio() {
+      console.log('Audio and webcam initialization requested by user');
+
+      document.querySelector("body").requestFullscreen();
+      
+      // Mark as initialized and hide the overlay
+      audioInitialized = true;
+      interactionOverlay.style.display = 'none';
+      
+      // Initialize webcam
+      await setupWebcam();
+      
+      // Play a silent MP3 file to initialize audio
+      try {
+        // Create a new Audio element with a short silent MP3
+        const silentAudio = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
+        silentAudio.volume = 0.1; // Very quiet
+        
+        // Play it
+        silentAudio.play().then(() => {
+          console.log('Audio context initialized successfully with silent audio');
+        }).catch(err => {
+          console.warn('Silent audio failed, but initialization may still work:', err);
+        });
+      } catch (err) {
+        console.warn('Failed to initialize audio context:', err);
+        // Proceed anyway - browser may still allow audio
+      }
+      
+      // Process any pending messages
+      if (pendingMessages.length > 0) {
+        console.log('Processing pending messages:', pendingMessages);
+        setTimeout(() => {
+          // Take only the most recent speak command to avoid queuing up multiple messages
+          const lastSpeakCommand = pendingMessages
+            .filter(cmd => cmd.type === 'speak')
+            .pop();
+            
+          if (lastSpeakCommand) {
+            makeTreeSpeak(lastSpeakCommand.text);
+          }
+          pendingMessages = [];
+        }, 1000); // Small delay to ensure audio system is ready
+      }
+    }
+
+    // Initialize
+    function init() {
+      console.log("Running init");
+
+      // Connect to Socket.IO
+      setupSocket();
+      
+      // Check URL for speech command
+      checkUrlForSpeechCommand();
+      
+      // Setup URL change listener for SPA navigation
+      window.addEventListener('popstate', checkUrlForSpeechCommand);
+      
+      // Setup overlay button and click handlers
+      startButton.addEventListener('click', initializeAudio);
+      interactionOverlay.addEventListener('click', initializeAudio);
+    }
+
+    console.log("Setup 2");
+
+    // Start everything when page loads
+    window.addEventListener('load', init);
+
+    // Expose functions to window for external control
+    window.treeControl = {
+      speak: makeTreeSpeak,
+      blink: treeAnimator.blink,
+      closeEyes: treeAnimator.closeEyes,
+      openEyes: treeAnimator.openEyes,
+      toggleAutoBlink: treeAnimator.toggleAutoBlink,
+      lookAt: treeAnimator.movePupils
+    };
+  </script>
+</body>
+</html>

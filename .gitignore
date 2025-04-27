@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.env
+.*.env
+.npmrc
+
+workingfiles
+cache/*.mp3
+certs/*.pem

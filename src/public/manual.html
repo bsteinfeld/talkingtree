@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talking Tree - Manual Mode</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #87ceeb, #3a8ebc);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+    }
+    
+    .container {
+      text-align: center;
+      position: relative;
+    }
+    
+    .status-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: #ccc;
+    }
+    
+    .status-connected {
+      background-color: #4CAF50;
+    }
+    
+    .tree-container {
+      width: 400px;
+      height: 500px;
+      position: relative;
+    }
+    
+    .ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 20%;
+      background: linear-gradient(to bottom, #8B4513, #654321);
+      border-radius: 50% 50% 0 0;
+      z-index: 1;
+    }
+    
+    .grass {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30px;
+      background: linear-gradient(to bottom, #228B22, #006400);
+      border-radius: 50% 50% 0 0;
+      z-index: 2;
+    }
+    
+    .tree-trunk {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 250px;
+      background: linear-gradient(to right, #8B4513, #A0522D, #8B4513);
+      border-radius: 20px 20px 40px 40px;
+      z-index: 3;
+    }
+    
+    .tree-face {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 100px;
+      z-index: 4;
+    }
+    
+    .eye {
+      position: absolute;
+      width: 20px;
+      height: 30px;
+      background-color: white;
+      border-radius: 50%;
+      top: 20px;
+      border: 2px solid #333;
+      overflow: hidden;
+    }
+    
+    .eye-left {
+      left: 15px;
+    }
+    
+    .eye-right {
+      right: 15px;
+    }
+    
+    .pupil {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #333;
+      border-radius: 50%;
+      top: 10px;
+      left: 5px;
+      transition: all 0.2s ease;
+    }
+    
+    .eyelid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #8B4513;
+      top: -100%;
+      left: 0;
+      border-radius: 50%;
+      z-index: 5;
+    }
+    
+    .mouth {
+      position: absolute;
+      width: 40px;
+      height: 5px;
+      background-color: #333;
+      border-radius: 5px;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: all 0.3s ease;
+    }
+    
+    .mouth.talking {
+      height: 20px;
+      border-radius: 10px;
+    }
+    
+    .tree-top {
+      position: absolute;
+      bottom: 260px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(#228B22, #006400);
+      border-radius: 50%;
+      z-index: 3;
+    }
+    
+    .tree-top-2 {
+      position: absolute;
+      bottom: 300px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(#32CD32, #228B22);
+      border-radius: 50%;
+      z-index: 3;
+    }
+    
+    .tree-top-3 {
+      position: absolute;
+      bottom: 340px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(#7CFC00, #32CD32);
+      border-radius: 50%;
+      z-index: 3;
+    }
+
+    .cloud {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: drift linear infinite;
+      opacity: 0.8;
+    }
+    
+    .cloud1 {
+      width: 100px;
+      height: 60px;
+      top: 100px;
+      left: -100px;
+      animation-duration: 30s;
+    }
+    
+    .cloud2 {
+      width: 140px;
+      height: 70px;
+      top: 50px;
+      left: -140px;
+      animation-duration: 35s;
+    }
+    
+    @keyframes drift {
+      from {
+        left: -150px;
+      }
+      to {
+        left: 100%;
+      }
+    }
+
+    .bird {
+      position: absolute;
+      font-size: 20px;
+      animation: fly 15s linear infinite;
+    }
+
+    @keyframes fly {
+      0% {
+        left: -50px;
+        top: 100px;
+      }
+      100% {
+        left: calc(100% + 50px);
+        top: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="status-indicator" id="connectionStatus"></div>
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="bird">🐦</div>
+    
+    <!-- Initial overlay for user interaction -->
+    <div id="interactionOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+        background-color: rgba(0,0,0,0.7); z-index: 10; display: flex; justify-content: center; 
+        align-items: center; flex-direction: column; color: white; text-align: center;">
+      <div style="background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; 
+          max-width: 80%; box-shadow: 0 0 20px rgba(0,0,0,0.3);">
+        <h2 style="margin-top: 0; color: #4CAF50;">Talking Tree</h2>
+        <p>This tree is controlled remotely.</p>
+        <p>Browser security requires user interaction before audio can play.</p>
+        <p><strong>Click the button below to enable audio:</strong></p>
+        <button id="startButton" style="padding: 15px 30px; background-color: #4CAF50; 
+          color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 18px;
+          margin: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+          Enable Tree Audio
+        </button>
+      </div>
+    </div>
+    
+    <div class="tree-container">
+      <div class="tree-top"></div>
+      <div class="tree-top-2"></div>
+      <div class="tree-top-3"></div>
+      <div class="tree-trunk">
+        <div class="tree-face">
+          <div class="eye eye-left">
+            <div class="pupil" id="leftPupil"></div>
+            <div class="eyelid" id="leftEyelid"></div>
+          </div>
+          <div class="eye eye-right">
+            <div class="pupil" id="rightPupil"></div>
+            <div class="eyelid" id="rightEyelid"></div>
+          </div>
+          <div class="mouth" id="mouth"></div>
+        </div>
+      </div>
+      <div class="ground"></div>
+      <div class="grass"></div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // DOM elements
+    const leftPupil = document.getElementById('leftPupil');
+    const rightPupil = document.getElementById('rightPupil');
+    const leftEyelid = document.getElementById('leftEyelid');
+    const rightEyelid = document.getElementById('rightEyelid');
+    const mouth = document.getElementById('mouth');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const interactionOverlay = document.getElementById('interactionOverlay');
+    const startButton = document.getElementById('startButton');
+    
+    let socket;
+    let audioElement = null;
+    let audioInitialized = false;
+    let pendingMessages = [];
+
+    // Connect to Socket.IO server
+    function connectSocket() {
+      // Get the current page URL to handle connecting from different devices
+      const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+      const host = window.location.hostname;
+      const port = window.location.port ? `:${window.location.port}` : '';
+      const serverUrl = `${protocol}//${host}${port}`;
+      
+      console.log(`Connecting to Socket.IO server at: ${serverUrl}`);
+      
+      // Connect with explicit URL and options
+      socket = io(serverUrl, {
+        transports: ['websocket', 'polling'],
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        timeout: 20000
+      });
+
+      // Connection established
+      socket.on('connect', () => {
+        console.log('Connected to server with ID:', socket.id);
+        connectionStatus.classList.add('status-connected');
+        
+        // Send a test message to verify connection is working
+        socket.emit('test-message', { client: 'manual', timestamp: Date.now() });
+      });
+
+      // Connection lost
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+        connectionStatus.classList.remove('status-connected');
+      });
+      
+      // Connection error
+      socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+        connectionStatus.classList.remove('status-connected');
+      });
+      
+      // Add a pinger to keep connection alive
+      setInterval(() => {
+        if (socket.connected) {
+          socket.emit('ping', { timestamp: Date.now() });
+        }
+      }, 30000);
+
+      // Handle tree control commands
+      socket.on('tree-update', (command) => {
+        console.log('Received command:', command);
+        
+        if (command.type === 'eyePosition') {
+          // Update eye position
+          updateEyePosition(command.x, command.y);
+        } 
+        else if (command.type === 'blink') {
+          // Make the tree blink
+          blinkEyes();
+        } 
+        else if (command.type === 'speak') {
+          // If audio is not initialized, store the command for later
+          if (!audioInitialized) {
+            console.log('Audio not initialized yet, queuing speech');
+            pendingMessages.push(command);
+            // Flash the overlay to prompt user interaction
+            interactionOverlay.style.backgroundColor = 'rgba(255,0,0,0.3)';
+            setTimeout(() => {
+              interactionOverlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            }, 300);
+          } else {
+            // Make the tree speak exactly what was sent, no AI processing
+            speak(command.text);
+          }
+        }
+        else if (command.type === 'stopSpeaking') {
+          // Stop speaking
+          stopSpeaking();
+        }
+      });
+    }
+
+    // Update eye position based on coordinates
+    function updateEyePosition(x, y) {
+      // Apply movement - limit the range of movement
+      leftPupil.style.left = `${(x - 50) * 0.1 + 5}px`;
+      rightPupil.style.left = `${(x - 50) * 0.1 + 5}px`;
+      
+      leftPupil.style.top = `${(y - 50) * 0.1 + 10}px`;
+      rightPupil.style.top = `${(y - 50) * 0.1 + 10}px`;
+    }
+
+    // Blink eyes
+    function blinkEyes() {
+      leftEyelid.style.top = '0';
+      rightEyelid.style.top = '0';
+      
+      setTimeout(() => {
+        leftEyelid.style.top = '-100%';
+        rightEyelid.style.top = '-100%';
+      }, 200);
+    }
+
+    // Animate mouth when talking
+    function animateMouth(talking) {
+      if (talking) {
+        let isOpen = false;
+        mouth.mouthInterval = setInterval(() => {
+          isOpen = !isOpen;
+          mouth.classList.toggle('talking', isOpen);
+        }, 200);
+      } else {
+        clearInterval(mouth.mouthInterval);
+        mouth.classList.remove('talking');
+      }
+    }
+
+    // Make the tree speak
+    function speak(text) {
+      // Stop any current speech
+      if (audioElement) {
+        audioElement.pause();
+        audioElement = null;
+      }
+      
+      // Start animating the mouth
+      animateMouth(true);
+      
+      // First try Azure speech service, with browser speech as fallback
+      const encodedText = encodeURIComponent(text);
+      
+      // Show a tiny loading indicator, which also helps with audio initialization
+      console.log("Requesting speech from Azure...");
+      
+      fetch(`/api/speak?words=${encodedText}`)
+        .then(response => {
+          // Check if we got audio
+          const contentType = response.headers.get('content-type');
+          
+          if (contentType && (contentType.includes('audio/mp3') || contentType.includes('audio/wav'))) {
+            console.log("Received Azure speech audio!");
+            return response.blob().then(blob => {
+              const url = URL.createObjectURL(blob);
+              
+              // Create and play the audio
+              audioElement = new Audio(url);
+              
+              audioElement.onended = () => {
+                URL.revokeObjectURL(url);
+                animateMouth(false);
+              };
+              
+              audioElement.onerror = () => {
+                console.log("Azure audio failed, falling back to browser speech");
+                URL.revokeObjectURL(url);
+                useBrowserSpeechSynthesis(text);
+              };
+              
+              // Return the play promise
+              return audioElement.play();
+            });
+          } else {
+            // Not audio, likely JSON with error
+            console.log("Did not receive audio, falling back to browser speech");
+            return response.json().then(data => {
+              useBrowserSpeechSynthesis(text);
+            });
+          }
+        })
+        .catch(error => {
+          console.error("Error with speech request:", error);
+          // Use browser speech synthesis as fallback
+          useBrowserSpeechSynthesis(text);
+        });
+    }
+    
+    // Helper to play audio from URL
+    function playAudioFromUrl(url, fallbackText) {
+      audioElement = new Audio(url);
+      
+      audioElement.onended = () => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+        animateMouth(false);
+      };
+      
+      audioElement.onerror = () => {
+        console.log('Audio playback failed, using browser speech');
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+        useBrowserSpeechSynthesis(fallbackText || "Hello");
+      };
+      
+      audioElement.play().catch(error => {
+        console.error('Error playing audio:', error);
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+        useBrowserSpeechSynthesis(fallbackText || "Hello");
+      });
+    }
+    
+    // Use browser's built-in speech synthesis
+    function useBrowserSpeechSynthesis(text) {
+      if ('speechSynthesis' in window) {
+        try {
+          // Cancel any ongoing speech first
+          window.speechSynthesis.cancel();
+          
+          // Create a new speech utterance
+          const utterance = new SpeechSynthesisUtterance(text);
+          
+          // Set properties for tree-like voice
+          utterance.lang = 'en-US';
+          utterance.rate = 0.9;  // Slightly slower rate
+          utterance.pitch = 1.2; // Slightly higher pitch
+          
+          // Try to get a female voice for the tree
+          const voices = window.speechSynthesis.getVoices();
+          const femaleVoice = voices.find(voice => 
+            voice.name.includes('female') || 
+            voice.name.includes('Female') || 
+            voice.name.includes('woman') ||
+            voice.name.toLowerCase().includes('samantha') ||
+            voice.name.toLowerCase().includes('karen') ||
+            voice.name.toLowerCase().includes('tessa') ||
+            voice.name.toLowerCase().includes('moira')
+          );
+          
+          if (femaleVoice) {
+            utterance.voice = femaleVoice;
+          }
+          
+          // Event handlers
+          utterance.onstart = () => {
+            console.log('Browser speech started');
+          };
+          
+          utterance.onend = () => {
+            console.log('Browser speech ended');
+            animateMouth(false);
+          };
+          
+          utterance.onerror = (event) => {
+            console.error('Browser speech error:', event.error);
+            animateMouth(false);
+          };
+          
+          // Speak the text
+          window.speechSynthesis.speak(utterance);
+        } catch (error) {
+          console.error('Error using speech synthesis:', error);
+          animateMouth(false);
+        }
+      } else {
+        console.error('Browser speech synthesis not supported');
+        animateMouth(false);
+      }
+    }
+
+    // Stop speaking
+    function stopSpeaking() {
+      if (audioElement) {
+        audioElement.pause();
+        audioElement = null;
+      }
+      
+      // Also cancel any browser speech synthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      
+      animateMouth(false);
+    }
+
+    // Initialize audio with user interaction - using a more robust approach
+    function initializeAudio() {
+      console.log('Audio initialization requested by user');
+      
+      // Mark as initialized and hide the overlay
+      audioInitialized = true;
+      interactionOverlay.style.display = 'none';
+      
+      // Play a silent MP3 file to initialize audio properly
+      // This is the most reliable way to ensure audio works later
+      try {
+        // Create a new Audio element with a short silent MP3
+        const silentAudio = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
+        silentAudio.volume = 0.1; // Very quiet
+        
+        // Play it
+        silentAudio.play().then(() => {
+          console.log('Audio context initialized successfully with silent audio');
+        }).catch(err => {
+          console.warn('Silent audio failed, but initialization may still work:', err);
+        });
+      } catch (err) {
+        console.warn('Failed to initialize audio context:', err);
+        // Proceed anyway - browser may still allow audio
+      }
+      
+      // Process any pending messages
+      if (pendingMessages.length > 0) {
+        console.log('Processing pending messages:', pendingMessages);
+        setTimeout(() => {
+          // Take only the most recent speak command to avoid queuing up multiple messages
+          const lastSpeakCommand = pendingMessages
+            .filter(cmd => cmd.type === 'speak')
+            .pop();
+            
+          if (lastSpeakCommand) {
+            speak(lastSpeakCommand.text);
+          }
+          pendingMessages = [];
+        }, 1000); // Small delay to ensure audio system is ready
+      }
+    }
+    
+    // Setup overlay button
+    startButton.addEventListener('click', initializeAudio);
+    interactionOverlay.addEventListener('click', initializeAudio);
+    
+    // Initialize socket connection
+    connectSocket();
+  </script>
+</body>
+</html>
