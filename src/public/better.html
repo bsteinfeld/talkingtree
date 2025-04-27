@@ -58,7 +58,14 @@
       color: #4CAF50;
     }
     
-    #startButton {
+    .start-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+    }
+    
+    .start-button {
       padding: 15px 30px;
       background-color: #4CAF50;
       color: white;
@@ -68,10 +75,19 @@
       font-size: 18px;
       margin: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.2s;
     }
     
-    #startButton:hover {
+    .start-button:hover {
       background-color: #3e8e41;
+    }
+    
+    #startFullscreenButton {
+      background-color: #2196F3;
+    }
+    
+    #startFullscreenButton:hover {
+      background-color: #1976D2;
     }
     
     /* Hide webcam video element but keep it active */
@@ -101,8 +117,11 @@
         <h2>Talking Tree</h2>
         <p>This tree speaks with AI-powered voice.</p>
         <p>Browser security requires user interaction before audio can play.</p>
-        <p><strong>Click the button below to enable audio and webcam:</strong></p>
-        <button id="startButton">Enable Tree Audio and Camera</button>
+        <p><strong>Choose one of the options below:</strong></p>
+        <div class="start-buttons">
+          <button id="startButton" class="start-button">Standard Mode</button>
+          <button id="startFullscreenButton" class="start-button">Fullscreen Mode</button>
+        </div>
       </div>
     </div>
     
@@ -145,6 +164,7 @@
     // User interaction overlay
     const interactionOverlay = document.getElementById('interactionOverlay');
     const startButton = document.getElementById('startButton');
+    const startFullscreenButton = document.getElementById('startFullscreenButton');
     const webcamVideo = document.getElementById('webcam');
     const webcamCanvas = document.getElementById('webcamCanvas');
     const webcamContext = webcamCanvas.getContext('2d');
@@ -552,19 +572,34 @@
       }
     }
     
-    // Initialize audio with user interaction
+    // Initialize audio with user interaction (standard mode)
     async function initializeAudio() {
-      console.log('Audio and webcam initialization requested by user');
-
-      document.querySelector("body").requestFullscreen();
+      console.log('Audio and webcam initialization requested in standard mode');
       
       // Mark as initialized and hide the overlay
       audioInitialized = true;
       interactionOverlay.style.display = 'none';
+    }
+    
+    // Initialize audio with user interaction (fullscreen mode)
+    async function initializeAudioFullscreen() {
+      console.log('Audio and webcam initialization requested in fullscreen mode');
       
-      // Initialize webcam
-      await setupWebcam();
+      try {
+        await document.querySelector("body").requestFullscreen();
+        console.log('Fullscreen mode activated');
+      } catch (err) {
+        console.warn('Fullscreen request failed:', err);
+        // Continue anyway - audio is more important than fullscreen
+      }
       
+      // Mark as initialized and hide the overlay
+      audioInitialized = true;
+      interactionOverlay.style.display = 'none';
+    }
+    
+    // Initialize audio system and handle pending messages
+    async function initializeAudioSystem() {
       // Play a silent MP3 file to initialize audio
       try {
         // Create a new Audio element with a short silent MP3
@@ -613,8 +648,23 @@
       window.addEventListener('popstate', checkUrlForSpeechCommand);
       
       // Setup overlay button and click handlers
-      startButton.addEventListener('click', initializeAudio);
-      interactionOverlay.addEventListener('click', initializeAudio);
+      startButton.addEventListener('click', async () => {
+        // Continue with initialization
+        await initializeAudio();
+        // Initialize webcam
+        await setupWebcam();
+        // Initialize audio system
+        initializeAudioSystem();
+      });
+      
+      startFullscreenButton.addEventListener('click', async () => {
+        // Continue with fullscreen initialization
+        await initializeAudioFullscreen();
+        // Initialize webcam
+        await setupWebcam();
+        // Initialize audio system
+        initializeAudioSystem();
+      });
     }
 
     console.log("Setup 2");

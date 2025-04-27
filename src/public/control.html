@@ -227,9 +227,9 @@
             <p>Click and drag on the pad to move the tree's eyes.</p>
             <div class="buttons">
               <button id="blinkBtn">Blink</button>
-              <button id="toggleAutoBlinkBtn" style="background-color: #607d8b;">Auto-Blink On</button>
               <button id="closeEyesBtn" style="background-color: #795548;">Close Eyes</button>
-              <button id="lookAroundBtn">Look Around (Auto)</button>
+              <button id="toggleAutoBlinkBtn" style="background-color: #607d8b;">Auto-Blink On</button>
+              <button id="lookAroundBtn">Auto Look</button>
             </div>
             <div class="buttons" style="margin-top: 15px;">
               <button id="toggleMagicBtn" style="background-color: #9c27b0;">✨ Magic Glimmer</button>
@@ -584,7 +584,7 @@
           }
         }, 2000);
       } else {
-        lookAroundBtn.textContent = 'Look Around (Auto)';
+        lookAroundBtn.textContent = 'Auto Look';
         clearInterval(lookAroundInterval);
       }
     }
