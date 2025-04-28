@@ -32,6 +32,9 @@ const treeAnimator = (function() {
   let magicEnabled = false;
   let magicParticles = [];
   let magicContainer = null;
+  let magicSize = 5; // Default size (1-10)
+  let magicSpeed = 5; // Default speed (1-10)
+  let magicAmount = 5; // Default amount (1-10)
   
   // Initialize the PixiJS application
   function init() {
@@ -119,8 +122,23 @@ const treeAnimator = (function() {
           setBlinkSpeed(command.speed);
         }
         else if (command.type === 'toggleMagic') {
-          // Toggle magic glimmer effect
+          // Toggle magic glimmer effect with optional settings
+          if (command.size !== undefined) magicSize = command.size;
+          if (command.speed !== undefined) magicSpeed = command.speed;
+          if (command.amount !== undefined) magicAmount = command.amount;
+          
           toggleMagicGlimmer(command.enabled);
+        }
+        else if (command.type === 'updateMagicSettings') {
+          // Update magic glimmer settings
+          if (command.size !== undefined) magicSize = command.size;
+          if (command.speed !== undefined) magicSpeed = command.speed;
+          if (command.amount !== undefined) magicAmount = command.amount;
+          
+          // Apply settings if magic is enabled
+          if (magicEnabled) {
+            // No need to toggle, just let the next particle creation use the new settings
+          }
         }
       });
       
@@ -750,23 +768,28 @@ const treeAnimator = (function() {
     particle.x = treeBody.x + Math.cos(angle) * distance;
     particle.y = treeBody.y + Math.sin(angle) * distance;
     
-    // Set random velocity
-    particle.vx = (Math.random() - 0.5) * 2;
-    particle.vy = (Math.random() - 0.5) * 2 - 1; // Slightly biased upward
+    // Set random velocity - scale by magicSpeed (1-10)
+    // Normalize speed to a range from 0.5 to 3
+    const speedFactor = 0.5 + (magicSpeed / 10) * 2.5;
+    particle.vx = (Math.random() - 0.5) * 2 * speedFactor;
+    particle.vy = ((Math.random() - 0.5) * 2 - 1) * speedFactor; // Slightly biased upward
     
     // Set particle properties
     particle.alpha = 0.7 + Math.random() * 0.3;
     
-    // Smaller scale since we're using bigger textures
-    const baseScale = 0.15 + Math.random() * 0.15;
+    // Scale based on magicSize (1-10)
+    // Normalize size to a range from 0.1 to 0.4
+    const sizeFactor = 0.1 + (magicSize / 10) * 0.3;
+    const baseScale = sizeFactor + Math.random() * (sizeFactor * 0.5);
     particle.scale.set(baseScale);
     
-    particle.lifespan = 50 + Math.random() * 100;
+    // Lifespan depends on speed - faster particles live shorter
+    particle.lifespan = (50 + Math.random() * 100) * (1 + (10 - magicSpeed) / 10);
     
     // Add rotation for sparkles
     if (particleType === 2) {
       particle.rotation = Math.random() * Math.PI;
-      particle.rotationSpeed = (Math.random() - 0.5) * 0.2;
+      particle.rotationSpeed = (Math.random() - 0.5) * 0.2 * speedFactor;
     }
     
     // Add to container
@@ -781,9 +804,24 @@ const treeAnimator = (function() {
     if (!magicEnabled) return;
     
     try {
-      // Create new particles randomly
-      if (Math.random() < 0.3) {
+      // Create new particles based on magicAmount (1-10)
+      // Convert to a probability between 0.05 and 0.8
+      const particleChance = 0.05 + (magicAmount / 10) * 0.75;
+      
+      // Limit the maximum number of particles based on the amount setting
+      const maxParticles = 10 + magicAmount * 15; // 25-160 particles
+      
+      // Only create new particles if we're below the max and random check passes
+      if (Math.random() < particleChance && magicParticles.length < maxParticles) {
         createMagicParticle();
+        
+        // For higher amounts, create multiple particles in a burst
+        if (magicAmount > 5 && Math.random() < 0.3) {
+          const burstAmount = Math.floor(magicAmount / 3);
+          for (let i = 0; i < burstAmount; i++) {
+            createMagicParticle();
+          }
+        }
       }
       
       // Update existing particles
@@ -889,7 +927,10 @@ const treeAnimator = (function() {
       magicGlimmerEnabled: magicEnabled,
       eyeX: 50, // Default center position
       eyeY: 50,
-      blinkSpeed: Math.round(BLINK_INTERVAL_MAX / 1500) // Convert back to seconds for UI
+      blinkSpeed: Math.round(BLINK_INTERVAL_MAX / 1500), // Convert back to seconds for UI
+      magicSize: magicSize,
+      magicSpeed: magicSpeed,
+      magicAmount: magicAmount
     };
   }
   

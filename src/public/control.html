@@ -388,6 +388,21 @@
                 <div>
                   <div class="toggle-label">✨ Magic Glimmer</div>
                   <div class="toggle-description">Magical sparkle effects</div>
+                  <div style="margin-top: 5px; display: flex; align-items: center;">
+                    <label for="magicSize" style="font-size: 0.75rem; margin-right: 5px;">Size:</label>
+                    <input type="range" id="magicSize" min="1" max="10" value="5" style="width: 100px;">
+                    <span id="magicSizeValue" style="font-size: 0.75rem; margin-left: 5px;">5</span>
+                  </div>
+                  <div style="margin-top: 5px; display: flex; align-items: center;">
+                    <label for="magicSpeed" style="font-size: 0.75rem; margin-right: 5px;">Speed:</label>
+                    <input type="range" id="magicSpeed" min="1" max="10" value="5" style="width: 100px;">
+                    <span id="magicSpeedValue" style="font-size: 0.75rem; margin-left: 5px;">5</span>
+                  </div>
+                  <div style="margin-top: 5px; display: flex; align-items: center;">
+                    <label for="magicAmount" style="font-size: 0.75rem; margin-right: 5px;">Amount:</label>
+                    <input type="range" id="magicAmount" min="1" max="10" value="5" style="width: 100px;">
+                    <span id="magicAmountValue" style="font-size: 0.75rem; margin-left: 5px;">5</span>
+                  </div>
                 </div>
               </div>
               
@@ -639,6 +654,22 @@
           if (data.magicGlimmerEnabled !== undefined) {
             magicGlimmerEnabled = data.magicGlimmerEnabled;
             magicToggle.checked = magicGlimmerEnabled;
+          }
+          
+          // Update magic settings
+          if (data.magicSize !== undefined) {
+            magicSize.value = data.magicSize;
+            magicSizeValue.textContent = data.magicSize;
+          }
+          
+          if (data.magicSpeed !== undefined) {
+            magicSpeed.value = data.magicSpeed;
+            magicSpeedValue.textContent = data.magicSpeed;
+          }
+          
+          if (data.magicAmount !== undefined) {
+            magicAmount.value = data.magicAmount;
+            magicAmountValue.textContent = data.magicAmount;
           }
           
           // Update eye position
@@ -1002,17 +1033,65 @@
       });
     });
     
-    // Magic glimmer toggle
+    // Magic glimmer toggle and settings
     const magicToggle = document.getElementById('magicToggle');
+    const magicSize = document.getElementById('magicSize');
+    const magicSizeValue = document.getElementById('magicSizeValue');
+    const magicSpeed = document.getElementById('magicSpeed');
+    const magicSpeedValue = document.getElementById('magicSpeedValue');
+    const magicAmount = document.getElementById('magicAmount');
+    const magicAmountValue = document.getElementById('magicAmountValue');
+    
+    // Update the magic size value when the slider changes
+    magicSize.addEventListener('input', () => {
+      const size = magicSize.value;
+      magicSizeValue.textContent = size;
+      
+      // Update magic settings if enabled
+      updateMagicSettings();
+    });
+    
+    // Update the magic speed value when the slider changes
+    magicSpeed.addEventListener('input', () => {
+      const speed = magicSpeed.value;
+      magicSpeedValue.textContent = speed;
+      
+      // Update magic settings if enabled
+      updateMagicSettings();
+    });
+    
+    // Update the magic amount value when the slider changes
+    magicAmount.addEventListener('input', () => {
+      const amount = magicAmount.value;
+      magicAmountValue.textContent = amount;
+      
+      // Update magic settings if enabled
+      updateMagicSettings();
+    });
+    
+    // Helper function to update magic settings
+    function updateMagicSettings() {
+      if (magicGlimmerEnabled && socket && socket.connected) {
+        socket.emit('tree-command', {
+          type: 'updateMagicSettings',
+          size: parseInt(magicSize.value),
+          speed: parseInt(magicSpeed.value),
+          amount: parseInt(magicAmount.value)
+        });
+      }
+    }
     
     magicToggle.addEventListener('change', () => {
       if (socket && socket.connected) {
         magicGlimmerEnabled = magicToggle.checked;
         
-        // Send command to toggle magic glimmer
+        // Send command to toggle magic glimmer with current settings
         socket.emit('tree-command', {
           type: 'toggleMagic',
-          enabled: magicGlimmerEnabled
+          enabled: magicGlimmerEnabled,
+          size: parseInt(magicSize.value),
+          speed: parseInt(magicSpeed.value),
+          amount: parseInt(magicAmount.value)
         });
       }
     });
