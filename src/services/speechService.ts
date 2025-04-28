@@ -94,12 +94,20 @@ export class SpeechService {
           console.log(`Generating OpenAI speech for text: "${text.substring(0, 30)}${text.length > 30 ? '...' : ''}"`);
           
           // Tree-specific voice instructions
-          const instructions = "Affect: A gentle, wise narrator with a warm and friendly tone, like a magical talking tree with ancient wisdom.\n\nTone: Magical, warm, and inviting, creating a sense of wonder and peace for listeners.\n\nPacing: Steady and measured, with slight pauses to emphasize magical moments and wisdom.\n\nEmotion: Wonder, curiosity, and gentle wisdom, with a lighthearted and positive vibe throughout.\n\nPronunciation: Clear and precise, with a slightly earthy, resonant quality to evoke the sense of an ancient, talking tree.";
+          // const instructions = "Affect: A gentle, wise narrator with a warm and friendly tone, like a magical talking tree with ancient wisdom.\n\nTone: Magical, warm, and inviting, creating a sense of wonder and peace for listeners.\n\nPacing: Steady and measured, with slight pauses to emphasize magical moments and wisdom.\n\nEmotion: Wonder, curiosity, and gentle wisdom, with a lighthearted and positive vibe throughout.\n\nPronunciation: Clear and precise, with a slightly earthy, resonant quality to evoke the sense of an ancient, talking tree.";
+          const instructions = `Delivery: Exaggerated and theatrical, with dramatic pauses, sudden outbursts, and gleeful cackling.
+
+Voice: High-energy, eccentric, and slightly unhinged, with a manic enthusiasm that rises and falls unpredictably.
+
+Tone: Excited, chaotic, and grandiose, as if reveling in the brilliance of a mad experiment.
+
+Pronunciation: Sharp and expressive, with elongated vowels, sudden inflections, and an emphasis on big words to sound more diabolical.`
           
           // Generate speech using OpenAI
           const response = await this.openai.audio.speech.create({
             model: 'gpt-4o-mini-tts',
-            voice: 'ash', // Nova is a warm and natural voice with a slightly resonant quality
+            // voice: 'ash', // Nova is a warm and natural voice with a slightly resonant quality
+            voice: 'alloy', // Nova is a warm and natural voice with a slightly resonant quality
             input: text,
             instructions,
           });

@@ -35,6 +35,8 @@ const treeAnimator = (function() {
   let magicSize = 5; // Default size (1-10)
   let magicSpeed = 5; // Default speed (1-10)
   let magicAmount = 5; // Default amount (1-10)
+  let magicSoundEnabled = false; // Default sound setting (off)
+  let magicLoopSound = null; // Sound object for looping magic sound
   
   // Initialize the PixiJS application
   function init() {
@@ -126,6 +128,7 @@ const treeAnimator = (function() {
           if (command.size !== undefined) magicSize = command.size;
           if (command.speed !== undefined) magicSpeed = command.speed;
           if (command.amount !== undefined) magicAmount = command.amount;
+          if (command.soundEnabled !== undefined) magicSoundEnabled = command.soundEnabled;
           
           toggleMagicGlimmer(command.enabled);
         }
@@ -135,9 +138,31 @@ const treeAnimator = (function() {
           if (command.speed !== undefined) magicSpeed = command.speed;
           if (command.amount !== undefined) magicAmount = command.amount;
           
-          // Apply settings if magic is enabled
-          if (magicEnabled) {
-            // No need to toggle, just let the next particle creation use the new settings
+          // Handle sound separately
+          if (command.soundEnabled !== undefined) {
+            const wasEnabled = magicSoundEnabled;
+            magicSoundEnabled = command.soundEnabled;
+            
+            // Start or stop the sound based on current state
+            if (magicEnabled) {
+              if (magicSoundEnabled && !wasEnabled) {
+                startMagicSound();
+              } else if (!magicSoundEnabled && wasEnabled) {
+                stopMagicSound();
+              }
+            }
+          }
+        }
+        else if (command.type === 'playSound') {
+          // Play individual sound effects on demand
+          if (command.sound === 'magic1') {
+            playMagic1Sound();
+          }
+          else if (command.sound === 'magic2') {
+            playMagic2Sound();
+          }
+          else if (command.sound === 'twinkle') {
+            playTwinkleSound();
           }
         }
       });
@@ -193,6 +218,87 @@ const treeAnimator = (function() {
     }
   }
   
+  // Load magic loop sound effect
+  function loadMagicSounds() {
+    try {
+      // Create looping magic sound
+      magicLoopSound = new Audio('/audio/magicloop.mp3');
+      magicLoopSound.volume = 0.3;
+      magicLoopSound.loop = true; // Set it to loop continuously
+      magicLoopSound.load();
+      
+      console.log('Magic loop sound loaded successfully');
+    } catch (error) {
+      console.error('Error loading magic loop sound:', error);
+      // Disable sound if there's an error
+      magicSoundEnabled = false;
+    }
+  }
+  
+  // Start playing the magic loop sound
+  function startMagicSound() {
+    if (!magicSoundEnabled || !magicLoopSound) return;
+    
+    try {
+      // Play the looping sound
+      magicLoopSound.play().then(() => {
+        console.log('Magic loop sound started');
+      }).catch(error => {
+        // Browsers often block autoplay until user interaction
+        console.error('Could not play magic loop sound:', error);
+        magicSoundEnabled = false;
+      });
+    } catch (error) {
+      console.error('Error starting magic loop sound:', error);
+      magicSoundEnabled = false;
+    }
+  }
+  
+  // Stop the magic loop sound
+  function stopMagicSound() {
+    if (!magicLoopSound) return;
+    
+    try {
+      magicLoopSound.pause();
+      magicLoopSound.currentTime = 0;
+      console.log('Magic loop sound stopped');
+    } catch (error) {
+      console.error('Error stopping magic loop sound:', error);
+    }
+  }
+  
+  // Individual sound players that will be exposed to the API
+  function playMagic1Sound() {
+    playOneShot('/audio/magic1.mp3');
+  }
+  
+  function playMagic2Sound() {
+    playOneShot('/audio/magic2.mp3');
+  }
+  
+  function playTwinkleSound() {
+    playOneShot('/audio/twinkle.mp3');
+  }
+  
+  // Helper to play a one-shot sound effect
+  function playOneShot(soundPath) {
+    try {
+      const sound = new Audio(soundPath);
+      sound.volume = 0.3;
+      
+      sound.play().then(() => {
+        // Auto-cleanup when sound finishes
+        sound.onended = () => {
+          sound.remove();
+        };
+      }).catch(error => {
+        console.error('Could not play sound:', error);
+      });
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  }
+  
   // Load all image assets manually since PixiJS v7 loader is different
   function loadAssetsManually() {
     // Create separate textures
@@ -229,6 +335,9 @@ const treeAnimator = (function() {
       
       setupTree(resources);
       assetsLoaded = true;
+      
+      // Load magic sounds after other assets are loaded
+      loadMagicSounds();
     }).catch(error => {
       console.error('Error loading tree assets:', error);
     });
@@ -584,6 +693,11 @@ const treeAnimator = (function() {
         if (!app.stage.children.includes(magicContainer)) {
           app.stage.addChild(magicContainer);
         }
+        
+        // Start magic loop sound if sound is enabled
+        if (magicSoundEnabled) {
+          startMagicSound();
+        }
       } else {
         // Clear all particles
         while (magicContainer.children.length > 0) {
@@ -596,6 +710,9 @@ const treeAnimator = (function() {
         if (app.stage.children.includes(magicContainer)) {
           app.stage.removeChild(magicContainer);
         }
+        
+        // Stop magic loop sound
+        stopMagicSound();
       }
     } catch (error) {
       console.error('Error in toggleMagicGlimmer:', error);
@@ -930,7 +1047,8 @@ const treeAnimator = (function() {
       blinkSpeed: Math.round(BLINK_INTERVAL_MAX / 1500), // Convert back to seconds for UI
       magicSize: magicSize,
       magicSpeed: magicSpeed,
-      magicAmount: magicAmount
+      magicAmount: magicAmount,
+      magicSoundEnabled: magicSoundEnabled
     };
   }
   
@@ -1013,6 +1131,11 @@ const treeAnimator = (function() {
     toggleMagicGlimmer,
     destroy,
     handleStateRequest,
+    loadMagicSounds, // Expose this so better.html can initialize sounds
+    // Sound functions
+    playMagic1Sound,
+    playMagic2Sound,
+    playTwinkleSound,
     _internal
   };
 })();

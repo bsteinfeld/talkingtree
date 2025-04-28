@@ -611,6 +611,13 @@
         // Play it
         silentAudio.play().then(() => {
           console.log('Audio context initialized successfully with silent audio');
+          
+          // Also initialize the magic sound effects now
+          if (treeAnimator && typeof treeAnimator.loadMagicSounds === 'function') {
+            // This is needed for magic sounds to work
+            treeAnimator.loadMagicSounds();
+            console.log('Magic sounds initialized');
+          }
         }).catch(err => {
           console.warn('Silent audio failed, but initialization may still work:', err);
         });
