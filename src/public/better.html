@@ -158,6 +158,7 @@
     let audioElement = null;
     let socket = null;
     let audioInitialized = false;
+    let skipAudio = false;  // New flag to completely skip audio processing
     let webcamInitialized = false;
     let pendingMessages = [];
     
@@ -220,6 +221,15 @@
           setTimeout(() => {
             interactionOverlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
           }, 300);
+        } else if (skipAudio) {
+          // In skipAudio mode, just animate the mouth without sound
+          treeAnimator.startTalking();
+          
+          // Stop talking after a few seconds (approximating speech duration)
+          const approximateDuration = Math.min(10000, text.length * 100);
+          setTimeout(() => {
+            treeAnimator.stopTalking();
+          }, approximateDuration);
         } else {
           makeTreeSpeak(text);
         }
@@ -278,6 +288,31 @@
           else if (command.action === 'stop' && isCapturingFrames) {
             console.log('Stopping webcam frame capture');
             stopCaptureFrames();
+          }
+        }
+        else if (command.type === 'skipAudio') {
+          console.log('Received skipAudio command:', command.enabled);
+          skipAudio = command.enabled;
+          
+          // When toggling skipAudio, update the tree animator's sound settings
+          if (treeAnimator) {
+            console.log('Setting sound enabled to:', !skipAudio);
+            
+            // Stop any magic sounds if they're playing when audio is disabled
+            if (skipAudio && typeof treeAnimator.stopMagicSound === 'function') {
+              treeAnimator.stopMagicSound();
+            }
+            
+            // Update treeAnimator's internal state to prevent or allow sounds
+            if (typeof treeAnimator.setSoundEnabled === 'function') {
+              treeAnimator.setSoundEnabled(!skipAudio);
+            }
+            
+            // Also force magic sound setting based on audio state
+            socket.emit('tree-command', {
+              type: 'updateMagicSettings',
+              soundEnabled: !skipAudio
+            });
           }
         }
       });
@@ -564,11 +599,47 @@
     function checkUrlForSpeechCommand() {
       const urlParams = new URLSearchParams(window.location.search);
       const wordsParam = urlParams.get('words');
+      const noAudioParam = urlParams.get('noaudio');
+      
+      // Check URL parameters  
+      const skipOverlayParam = urlParams.get('skipOverlay');
+      
+      // Check if noaudio parameter is present
+      if (noAudioParam !== null) {
+        // Set flag to skip audio completely
+        skipAudio = true;
+        
+        // Also disable sound effects in the tree animator
+        if (treeAnimator && typeof treeAnimator.setSoundEnabled === 'function') {
+          treeAnimator.setSoundEnabled(false);
+        }
+      }
+      
+      // Always skip the overlay in iframe/preview mode
+      if (skipOverlayParam !== null) {
+        // Consider audio as initialized for UI purposes
+        audioInitialized = true;
+        // Hide the overlay since we don't need permission
+        interactionOverlay.style.display = 'none';
+        
+        // Make the tree visible immediately
+        console.log('Preview mode active - skipping overlay');
+      }
       
       if (wordsParam) {
         if (!audioInitialized) {
           pendingMessages.push({type: 'speak', text: wordsParam});
+        } else if (skipAudio) {
+          // In noaudio mode, just animate the mouth without sound
+          treeAnimator.startTalking();
+          
+          // Stop talking after a few seconds (approximating speech duration)
+          const approximateDuration = Math.min(10000, wordsParam.length * 100);
+          setTimeout(() => {
+            treeAnimator.stopTalking();
+          }, approximateDuration);
         } else {
+          // Normal mode with audio
           makeTreeSpeak(wordsParam);
         }
       }

@@ -154,15 +154,19 @@ const treeAnimator = (function() {
           }
         }
         else if (command.type === 'playSound') {
-          // Play individual sound effects on demand
-          if (command.sound === 'magic1') {
-            playMagic1Sound();
-          }
-          else if (command.sound === 'magic2') {
-            playMagic2Sound();
-          }
-          else if (command.sound === 'twinkle') {
-            playTwinkleSound();
+          // Play individual sound effects on demand (only if sound is enabled)
+          if (soundEnabled) {
+            if (command.sound === 'magic1') {
+              playMagic1Sound();
+            }
+            else if (command.sound === 'magic2') {
+              playMagic2Sound();
+            }
+            else if (command.sound === 'twinkle') {
+              playTwinkleSound();
+            }
+          } else {
+            console.log('Sound is disabled, skipping sound effect:', command.sound);
           }
         }
       });
@@ -237,10 +241,10 @@ const treeAnimator = (function() {
   
   // Start playing the magic loop sound
   function startMagicSound() {
-    if (!magicSoundEnabled || !magicLoopSound) return;
+    if (!magicSoundEnabled || !magicLoopSound || !soundEnabled) return;
     
     try {
-      // Play the looping sound
+      // Play the looping sound (only if sound is enabled)
       magicLoopSound.play().then(() => {
         console.log('Magic loop sound started');
       }).catch(error => {
@@ -282,6 +286,9 @@ const treeAnimator = (function() {
   
   // Helper to play a one-shot sound effect
   function playOneShot(soundPath) {
+    // Skip playing sounds if sound is disabled
+    if (!soundEnabled) return;
+    
     try {
       const sound = new Audio(soundPath);
       sound.volume = 0.3;
@@ -694,8 +701,8 @@ const treeAnimator = (function() {
           app.stage.addChild(magicContainer);
         }
         
-        // Start magic loop sound if sound is enabled
-        if (magicSoundEnabled) {
+        // Start magic loop sound if both magic sound and general sound are enabled
+        if (magicSoundEnabled && soundEnabled) {
           startMagicSound();
         }
       } else {
@@ -1118,6 +1125,31 @@ const treeAnimator = (function() {
     assetsLoaded
   };
   
+  // Add a function to control all sound
+  let soundEnabled = true;
+  
+  function setSoundEnabled(enabled) {
+    soundEnabled = enabled;
+    
+    // If disabling sound, also stop any currently playing sounds
+    if (!soundEnabled) {
+      stopMagicSound();
+    }
+  }
+  
+  // Wrap sound playing functions to respect soundEnabled flag
+  function playMagic1SoundIfEnabled() {
+    if (soundEnabled) playMagic1Sound();
+  }
+  
+  function playMagic2SoundIfEnabled() {
+    if (soundEnabled) playMagic2Sound();
+  }
+  
+  function playTwinkleSoundIfEnabled() {
+    if (soundEnabled) playTwinkleSound();
+  }
+  
   // Public API
   return {
     startTalking,
@@ -1133,9 +1165,11 @@ const treeAnimator = (function() {
     handleStateRequest,
     loadMagicSounds, // Expose this so better.html can initialize sounds
     // Sound functions
-    playMagic1Sound,
-    playMagic2Sound,
-    playTwinkleSound,
+    playMagic1Sound: playMagic1SoundIfEnabled,
+    playMagic2Sound: playMagic2SoundIfEnabled,
+    playTwinkleSound: playTwinkleSoundIfEnabled,
+    stopMagicSound, // Expose the stop function
+    setSoundEnabled, // Add control for enabling/disabling sounds
     _internal
   };
 })();

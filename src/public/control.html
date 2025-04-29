@@ -17,7 +17,8 @@
     h1 {
       text-align: center;
       color: #2c8c2c;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
+      margin-top: 10px;
     }
     
     .header-status {
@@ -511,16 +512,36 @@
           <button id="refreshWebcamBtn" style="background-color: #607d8b;">Refresh Feed</button>
         </div>
       </div>
+      
+      <div class="control-section">
+        <div class="section-title">Tree Preview</div>
+        <div class="toggle-container" style="margin-bottom: 10px;">
+          <label class="toggle-switch">
+            <input type="checkbox" id="previewAudioToggle" checked="checked">
+            <span class="toggle-slider"></span>
+          </label>
+          <div>
+            <div class="toggle-label">No Audio Mode</div>
+            <div class="toggle-description">Display tree without sound</div>
+          </div>
+        </div>
+        <div class="tree-preview-container" style="width: 100%; height: 300px; border-radius: 5px; border: 1px solid #ddd; overflow: hidden; position: relative;">
+          <iframe id="treePreview" src="/better.html?noaudio=1&skipOverlay=1" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
+  <!-- No need for PixiJS since we're using an iframe -->
   <script>
     // DOM elements
     const connectionStatus = document.getElementById('connectionStatus');
     const statusText = document.getElementById('statusText');
     const eyePad = document.getElementById('eyePad');
     const eyeCursor = document.getElementById('eyeCursor');
+    const treePreview = document.getElementById('treePreview');
+    const previewAudioToggle = document.getElementById('previewAudioToggle');
     const blinkBtn = document.getElementById('blinkBtn');
     const resetEyesBtn = document.getElementById('resetEyesBtn');
     const speechText = document.getElementById('speechText');
@@ -547,6 +568,10 @@
     let autoBlinkEnabled = true;
     let gateOpen = false;
     let gate2Open = false;
+    
+    // Tree preview iframe
+    let treePreviewLoaded = false;
+    let previewNoAudio = true; // Default to no audio for preview
     
     // Connect to Socket.IO server
     function connectSocket() {
@@ -1357,6 +1382,19 @@
         socket.emit('get-tree-state');
       }
     }
+    
+    // Preview audio toggle handler
+    previewAudioToggle.addEventListener('change', () => {
+      previewNoAudio = previewAudioToggle.checked;
+      
+      // Send command to update skipAudio flag via socket
+      if (socket && socket.connected) {
+        socket.emit('tree-command', {
+          type: 'skipAudio',
+          enabled: previewNoAudio
+        });
+      }
+    });
     
     // Initialize
     connectSocket();
