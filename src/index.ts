@@ -229,6 +229,11 @@ app.get('/control', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'control.html'));
 });
 
+// Music player endpoint
+app.get('/music', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'music.html'));
+});
+
 // Better tree endpoint with PixiJS animation
 app.get('/better', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'better.html'));

@@ -480,7 +480,7 @@
       </div>
       
       <div class="control-section">
-        <div class="section-title">Gate Control</div>
+        <div class="section-title">Remote Device Control</div>
         <div class="feature-group">
           <div class="toggle-container">
             <label class="toggle-switch" style="background-color: #ff9800;">
@@ -501,6 +501,17 @@
             <div>
               <div class="toggle-label">Gate 2</div>
               <div class="toggle-description" id="gate2Status">Currently closed</div>
+            </div>
+          </div>
+          
+          <div class="toggle-container">
+            <label class="toggle-switch" style="background-color: #673AB7;">
+              <input type="checkbox" id="musicToggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <div>
+              <div class="toggle-label">Music Player</div>
+              <div class="toggle-description" id="musicStatus">Currently off</div>
             </div>
           </div>
         </div>
@@ -580,6 +591,8 @@
     // No longer using the useAI checkbox
     const phrasesContainer = document.getElementById('phrasesContainer');
     const eventLog = document.getElementById('eventLog');
+    const musicToggle = document.getElementById('musicToggle');
+    const musicStatus = document.getElementById('musicStatus');
     
     // Webcam elements
     const webcamDisplay = document.getElementById('webcamDisplay');
@@ -599,6 +612,7 @@
     let autoBlinkEnabled = true;
     let gateOpen = false;
     let gate2Open = false;
+    let musicEnabled = false;
     
     // Tree preview iframe
     let treePreviewLoaded = false;
@@ -791,6 +805,13 @@
             gate2Open = data.gate2Open;
             gate2Toggle.checked = gate2Open;
             gate2Status.textContent = gate2Open ? 'Currently open' : 'Currently closed';
+          }
+          
+          // Update music state
+          if (data.musicEnabled !== undefined) {
+            musicEnabled = data.musicEnabled;
+            musicToggle.checked = musicEnabled;
+            musicStatus.textContent = musicEnabled ? 'Currently playing' : 'Currently off';
           }
         }
       }
@@ -1426,6 +1447,26 @@
       } finally {
         // Re-enable toggle
         gate2Toggle.disabled = false;
+      }
+    });
+    
+    // Music player toggle switch
+    musicToggle.addEventListener('change', () => {
+      // Get the current state from the toggle
+      musicEnabled = musicToggle.checked;
+      
+      // Update status display
+      musicStatus.textContent = musicEnabled ? 'Currently playing' : 'Currently off';
+      
+      // Send command to server
+      if (socket && socket.connected) {
+        socket.emit('tree-command', {
+          type: 'toggleMusic',
+          enabled: musicEnabled
+        });
+        
+        // Log the event
+        addEventLogEntry(`Music ${musicEnabled ? 'started' : 'stopped'}`);
       }
     });
     
