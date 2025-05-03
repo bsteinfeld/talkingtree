@@ -121,6 +121,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Serve audio files from cache directory
 app.use('/audio', express.static(path.join(__dirname, '..', 'cache')));
 
+// Serve recordings
+app.use('/recordings', express.static(path.join(__dirname, '..', 'recordings')));
+
 // Socket.IO setup for real-time tree control
 // @ts-ignore - Ignore TypeScript errors for socket.io parameters
 io.on('connection', (socket) => {
@@ -187,8 +190,43 @@ io.on('connection', (socket) => {
   // Handle webcam frames
   socket.on('webcam-frame', (data) => {
     console.log('Webcam frame received, broadcasting to all clients');
+    
     // Broadcast the webcam frame to all connected clients
     io.emit('webcam-frame', data);
+    
+    // Check if we should save this frame to a recording
+    try {
+      // Import routes directly to avoid circular references
+      const routesModule = require('./routes/index');
+      
+      // Check if recording is active and frame data exists
+      if (routesModule.isRecordingActive && routesModule.isRecordingActive() && data && data.frame) {
+        // Extract the base64 data (remove the data:image/jpeg;base64, part)
+        const base64Data = data.frame.replace(/^data:image\/\w+;base64,/, '');
+        const frameBuffer = Buffer.from(base64Data, 'base64');
+        
+        // Save the frame to the recording
+        routesModule.saveWebcamFrame(frameBuffer);
+      }
+    } catch (error) {
+      console.error('Error saving webcam frame to recording:', error);
+    }
+  });
+  
+  // Handle audio data for recordings
+  socket.on('audio-data', (data) => {
+    try {
+      // Import routes directly to avoid circular references
+      const routesModule = require('./routes/index');
+      
+      // Forward audio data to recording handler if recording is active
+      if (routesModule.isRecordingActive && routesModule.isRecordingActive() && 
+          routesModule.saveAudioData && data && data.audio) {
+        routesModule.saveAudioData(data.audio);
+      }
+    } catch (error) {
+      console.error('Error saving audio data for recording:', error);
+    }
   });
   
   // Handle tree status updates

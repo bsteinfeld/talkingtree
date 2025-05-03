@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,11 +14,11 @@
       color: #333;
       position: relative;
     }
-    
+
     h1 {
       display: none;
     }
-    
+
     .vertical-header {
       position: fixed;
       left: 30px;
@@ -28,12 +29,12 @@
       color: #2c8c2c;
       font-size: 1.5rem;
       letter-spacing: 0.3rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
       font-weight: bold;
       z-index: 100;
       min-height: 75%
     }
-    
+
     .header-status {
       position: absolute;
       top: 20px;
@@ -43,16 +44,16 @@
       padding: 5px 10px;
       background-color: #f0f0f0;
       border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    
+
     /* Toggle switch styles */
     .toggle-container {
       display: flex;
       align-items: center;
       margin-bottom: 10px;
     }
-    
+
     .toggle-switch {
       position: relative;
       display: inline-block;
@@ -60,13 +61,13 @@
       height: 30px;
       margin-right: 10px;
     }
-    
+
     .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
-    
+
     .toggle-slider {
       position: absolute;
       cursor: pointer;
@@ -78,7 +79,7 @@
       transition: .4s;
       border-radius: 34px;
     }
-    
+
     .toggle-slider:before {
       position: absolute;
       content: "";
@@ -90,68 +91,68 @@
       transition: .4s;
       border-radius: 50%;
     }
-    
-    input:checked + .toggle-slider {
+
+    input:checked+.toggle-slider {
       background-color: #4CAF50;
     }
-    
-    input:focus + .toggle-slider {
+
+    input:focus+.toggle-slider {
       box-shadow: 0 0 1px #4CAF50;
     }
-    
-    input:checked + .toggle-slider:before {
+
+    input:checked+.toggle-slider:before {
       transform: translateX(30px);
     }
-    
+
     .toggle-label {
       font-weight: bold;
       font-size: 0.9rem;
     }
-    
+
     .toggle-description {
       font-size: 0.75rem;
       color: #666;
       margin-top: 2px;
     }
-    
+
     /* Specialty toggle colors */
-    .toggle-autoblink input:checked + .toggle-slider {
+    .toggle-autoblink input:checked+.toggle-slider {
       background-color: #607d8b;
     }
-    
-    .toggle-magic input:checked + .toggle-slider {
+
+    .toggle-magic input:checked+.toggle-slider {
       background-color: #9c27b0;
     }
-    
-    .toggle-webcam input:checked + .toggle-slider {
+
+    .toggle-webcam input:checked+.toggle-slider {
       background-color: #2196F3;
     }
-    
-    .toggle-eyesclosed input:checked + .toggle-slider {
+
+    .toggle-eyesclosed input:checked+.toggle-slider {
       background-color: #795548;
     }
-    
+
     /* Gate toggle styles */
     .toggle-switch span.toggle-slider {
       transition: background-color 0.4s;
     }
-    
+
     /* Gate 1 toggle (orange) */
-    #gate1Toggle:checked + .toggle-slider {
+    #gate1Toggle:checked+.toggle-slider {
       background-color: #ff9800;
     }
-    
+
     /* Gate 2 toggle (blue) */
-    #gate2Toggle:checked + .toggle-slider {
+    #gate2Toggle:checked+.toggle-slider {
       background-color: #2196F3;
     }
-    
+
     .feature-group {
       border-top: 1px solid #eee;
       padding-top: 15px;
       margin-top: 15px;
     }
-    
+
     .feature-title {
       font-weight: bold;
       margin-bottom: 10px;
@@ -159,7 +160,7 @@
       font-size: 0.9rem;
       text-transform: uppercase;
     }
-    
+
     .main-container {
       display: flex;
       flex-direction: row;
@@ -170,13 +171,13 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       padding: 20px;
     }
-    
+
     .left-column {
       flex: 1;
       margin-right: 20px;
       width: 600px
     }
-    
+
     .right-column {
       width: 450px;
       position: sticky;
@@ -184,14 +185,14 @@
       align-self: flex-start;
       margin-right: 20px;
     }
-    
+
     .log-column {
       width: 500px;
       position: sticky;
       top: 10px;
       align-self: flex-start;
     }
-    
+
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -201,12 +202,12 @@
       background-color: #f0f0f0;
       border-radius: 5px;
     }
-    
+
     .connection-status {
       display: flex;
       align-items: center;
     }
-    
+
     .status-indicator {
       width: 15px;
       height: 15px;
@@ -214,29 +215,29 @@
       background-color: #ccc;
       margin-right: 10px;
     }
-    
+
     .status-connected {
       background-color: #4CAF50;
     }
-    
+
     .control-section {
       margin-bottom: 20px;
       border: 1px solid #ddd;
       border-radius: 5px;
       padding: 15px;
     }
-    
+
     .section-title {
       font-weight: bold;
       margin-bottom: 15px;
       color: #2c8c2c;
     }
-    
+
     .eye-control {
       display: flex;
       gap: 20px;
     }
-    
+
     .eye-pad {
       width: 200px;
       height: 200px;
@@ -246,7 +247,7 @@
       position: relative;
       cursor: crosshair;
     }
-    
+
     .eye-cursor {
       width: 10px;
       height: 10px;
@@ -257,13 +258,13 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
-    
+
     .buttons {
       display: flex;
       gap: 10px;
       margin-top: 10px;
     }
-    
+
     button {
       padding: 8px 15px;
       background-color: #2c8c2c;
@@ -273,21 +274,21 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    
+
     button:hover {
       background-color: #1f6f1f;
     }
-    
+
     button:disabled {
       background-color: #aaa;
       cursor: not-allowed;
     }
-    
+
     .speech-control {
       display: flex;
       flex-direction: column;
     }
-    
+
     textarea {
       height: 100px;
       padding: 10px;
@@ -297,14 +298,14 @@
       margin-bottom: 10px;
       font-family: inherit;
     }
-    
+
     .quick-phrases {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 15px;
     }
-    
+
     .quick-phrase {
       background-color: #eef5ee;
       border: 1px solid #c5d8c5;
@@ -314,45 +315,58 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    
+
     .quick-phrase:hover {
       background-color: #d5e8d5;
     }
-    
+
     .controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    
+
     .manual-link {
       text-align: center;
       margin-top: 20px;
     }
-    
+
     .manual-link a {
       color: #2c8c2c;
       text-decoration: none;
     }
-    
+
     .manual-link a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
+
 <body>
   <div class="vertical-header">🌳TALKING TREE CONTROL PANEL🌳</div>
-  
+
   <div class="header-status">
     <div class="connection-status">
       <div class="status-indicator" id="connectionStatus"></div>
       <span id="statusText">Disconnected</span>
     </div>
   </div>
-  
+
+  <!-- Recordings Modal -->
+  <div id="recordingsModal"
+    style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);">
+    <div
+      style="background-color: #fefefe; margin: 10% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 800px;">
+      <span style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;"
+        id="closeRecordingsModal">&times;</span>
+      <h2>Webcam Recordings</h2>
+      <div id="recordingsList" style="margin-top: 20px; max-height: 400px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
   <div class="main-container">
     <div class="left-column">
-      
+
       <div class="control-section">
         <div class="section-title">Eye Control</div>
         <div class="eye-control">
@@ -361,15 +375,15 @@
           </div>
           <div class="eye-actions">
             <p>Click and drag on the pad to move the tree's eyes.</p>
-            
+
             <div class="buttons">
               <button id="blinkBtn">Blink Now</button>
               <button id="resetEyesBtn">Reset Eyes</button>
             </div>
-            
+
             <div class="feature-group">
               <div class="feature-title">Eye Features</div>
-              
+
               <div class="toggle-container">
                 <label class="toggle-switch toggle-autoblink">
                   <input type="checkbox" id="autoBlinkToggle" checked>
@@ -385,7 +399,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="toggle-container">
                 <label class="toggle-switch">
                   <input type="checkbox" id="lookAroundToggle">
@@ -401,7 +415,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="toggle-container">
                 <label class="toggle-switch toggle-magic">
                   <input type="checkbox" id="magicToggle">
@@ -432,15 +446,18 @@
                     </label>
                     <span style="font-size: 0.75rem;">Magic Background Music</span>
                   </div>
-                  
+
                   <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
-                    <button id="magic1Sound" class="magic-sound-btn" style="font-size: 0.7rem; padding: 3px 6px; background-color: #9c27b0;">Magic Sound 1</button>
-                    <button id="magic2Sound" class="magic-sound-btn" style="font-size: 0.7rem; padding: 3px 6px; background-color: #9c27b0;">Magic Sound 2</button>
-                    <button id="twinkleSound" class="magic-sound-btn" style="font-size: 0.7rem; padding: 3px 6px; background-color: #9c27b0;">Twinkle Sound</button>
+                    <button id="magic1Sound" class="magic-sound-btn"
+                      style="font-size: 0.7rem; padding: 3px 6px; background-color: #9c27b0;">Magic Sound 1</button>
+                    <button id="magic2Sound" class="magic-sound-btn"
+                      style="font-size: 0.7rem; padding: 3px 6px; background-color: #9c27b0;">Magic Sound 2</button>
+                    <button id="twinkleSound" class="magic-sound-btn"
+                      style="font-size: 0.7rem; padding: 3px 6px; background-color: #9c27b0;">Twinkle Sound</button>
                   </div>
                 </div>
               </div>
-              
+
               <div class="toggle-container">
                 <label class="toggle-switch toggle-eyesclosed">
                   <input type="checkbox" id="eyesClosedToggle">
@@ -455,7 +472,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="control-section">
         <div class="section-title">Speech Control</div>
         <div class="speech-control">
@@ -466,7 +483,7 @@
               <button id="stopBtn">Stop</button>
             </div>
           </div>
-          
+
           <div class="quick-phrases">
             <div class="section-title">Quick Phrases:</div>
             <div id="phrasesContainer">
@@ -478,7 +495,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="control-section">
         <div class="section-title">Remote Device Control</div>
         <div class="feature-group">
@@ -492,7 +509,7 @@
               <div class="toggle-description" id="gate1Status">Currently closed</div>
             </div>
 
-            
+
             <label class="toggle-switch" style="margin-left: 50px; background-color: #2196F3;">
               <input type="checkbox" id="gate2Toggle">
               <span class="toggle-slider"></span>
@@ -502,7 +519,7 @@
               <div class="toggle-description" id="gate2Status">Currently closed</div>
             </div>
           </div>
-          
+
           <div class="toggle-container">
             <label class="toggle-switch" style="background-color: #673AB7;">
               <input type="checkbox" id="musicToggle">
@@ -520,7 +537,7 @@
     <div class="right-column">
       <div class="control-section">
         <div class="section-title">Live View</div>
-        
+
         <div class="toggle-container">
           <label class="toggle-switch toggle-webcam">
             <input type="checkbox" id="webcamToggle">
@@ -531,19 +548,23 @@
             <div class="toggle-description" id="webcamStatus">Not connected</div>
           </div>
 
-          <div class="buttons" style="margin-left: 50px; margin-top: 0;">
+          <div class="buttons" style="margin-left: 30px; margin-top: 0;">
             <button id="refreshWebcamBtn" style="background-color: #607d8b;">Refresh Feed</button>
+            <button id="recordWebcamBtn" style="background-color: #F44336;">Start Recording</button>
+            <button id="listRecordingsBtn" style="background-color: #3F51B5;">Recordings</button>
           </div>
         </div>
-        
+
         <div class="webcam-container" style="width: 100%; position: relative; margin-top: 10px;">
-          <img id="webcamDisplay" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Webcam feed" style="width: 100%; border-radius: 5px; border: 1px solid #ddd;">
-          <div id="webcamOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.7); color: white; border-radius: 5px;">
+          <img id="webcamDisplay" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            alt="Webcam feed" style="width: 100%; border-radius: 5px; border: 1px solid #ddd;">
+          <div id="webcamOverlay"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.7); color: white; border-radius: 5px;">
             Waiting for webcam feed...
           </div>
         </div>
       </div>
-      
+
       <div class="control-section">
         <div class="section-title">Tree Preview</div>
         <div class="toggle-container" style="margin-bottom: 10px;">
@@ -556,16 +577,19 @@
             <div class="toggle-description">Display tree without sound</div>
           </div>
         </div>
-        <div class="tree-preview-container" style="width: 100%; height: 300px; border-radius: 5px; border: 1px solid #ddd; overflow: hidden; position: relative;">
-          <iframe id="treePreview" src="/better.html?noaudio=1&skipOverlay=1" style="width: 100%; height: 100%; border: none;"></iframe>
+        <div class="tree-preview-container"
+          style="width: 100%; height: 300px; border-radius: 5px; border: 1px solid #ddd; overflow: hidden; position: relative;">
+          <iframe id="treePreview" src="/better.html?noaudio=1&skipOverlay=1"
+            style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
       </div>
     </div>
-    
+
     <div class="log-column">
       <div class="control-section" style="height: calc(100% - 30px);">
         <div class="section-title">Event Log</div>
-        <div id="eventLog" style="height: 600px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 0.9rem; background-color: #f9f9f9;">
+        <div id="eventLog"
+          style="height: 600px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 0.9rem; background-color: #f9f9f9;">
           <!-- Event logs will appear here -->
         </div>
       </div>
@@ -592,31 +616,43 @@
     const eventLog = document.getElementById('eventLog');
     const musicToggle = document.getElementById('musicToggle');
     const musicStatus = document.getElementById('musicStatus');
-    
+
     // Webcam elements
     const webcamDisplay = document.getElementById('webcamDisplay');
     const webcamOverlay = document.getElementById('webcamOverlay');
     const webcamStatus = document.getElementById('webcamStatus');
     const refreshWebcamBtn = document.getElementById('refreshWebcamBtn');
+    const recordWebcamBtn = document.getElementById('recordWebcamBtn');
+    const listRecordingsBtn = document.getElementById('listRecordingsBtn');
+    const recordingsModal = document.getElementById('recordingsModal');
+    const closeRecordingsModal = document.getElementById('closeRecordingsModal');
+    const recordingsList = document.getElementById('recordingsList');
     const toggleWebcamBtn = document.getElementById('toggleWebcamBtn');
     const toggleMagicBtn = document.getElementById('toggleMagicBtn');
-    
+
     let socket;
     let isLookingAround = false;
     let lookAroundInterval;
     let lastFrameTimestamp = 0;
     let webcamActive = false;
     let webcamStreamingEnabled = false;
+    let webcamRecording = false;
     let magicGlimmerEnabled = false;
+
+    // Audio capture variables
+    let audioContext = null;
+    let audioStream = null;
+    let audioRecorder = null;
+    let audioSendInterval = null;
     let autoBlinkEnabled = true;
     let gateOpen = false;
     let gate2Open = false;
     let musicEnabled = false;
-    
+
     // Tree preview iframe
     let treePreviewLoaded = false;
     let previewNoAudio = true; // Default to no audio for preview
-    
+
     // Connect to Socket.IO server
     function connectSocket() {
       // Get the current page URL to handle connecting from different devices
@@ -624,7 +660,7 @@
       const host = window.location.hostname;
       const port = window.location.port ? `:${window.location.port}` : '';
       const serverUrl = `${protocol}//${host}${port}`;
-      
+
       // Connect with explicit URL and options
       socket = io(serverUrl, {
         transports: ['websocket', 'polling'],
@@ -632,7 +668,7 @@
         reconnectionDelay: 1000,
         timeout: 20000
       });
-      
+
       // Fetch current server state
       fetch('/api/state')
         .then(response => response.json())
@@ -644,6 +680,18 @@
               musicToggle.checked = musicEnabled;
               musicStatus.textContent = musicEnabled ? 'Currently playing' : 'Currently off';
             }
+
+            // Update webcam recording state
+            if (data.state.recordingWebcam !== undefined) {
+              webcamRecording = data.state.recordingWebcam;
+              if (webcamRecording) {
+                recordWebcamBtn.textContent = 'Recording...';
+                recordWebcamBtn.style.backgroundColor = '#B71C1C';
+              } else {
+                recordWebcamBtn.textContent = 'Start Recording';
+                recordWebcamBtn.style.backgroundColor = '#F44336';
+              }
+            }
           }
         })
         .catch(error => {
@@ -654,51 +702,51 @@
       socket.on('connect', () => {
         connectionStatus.classList.add('status-connected');
         statusText.textContent = 'Connected';
-        
+
         // Add connection event to log
         if (eventLog) {
           addEventLogEntry('Connected to server');
         }
-        
+
         // Send a test message to verify connection is working
         socket.emit('test-message', { client: 'control', timestamp: Date.now() });
-        
+
         // Request current tree state
         syncInitialState();
       });
-      
+
       // Connection lost
       socket.on('disconnect', () => {
         connectionStatus.classList.remove('status-connected');
         statusText.textContent = 'Disconnected';
-        
+
         // Add disconnection event to log
         if (eventLog) {
           addEventLogEntry('Disconnected from server');
         }
       });
-      
+
       // Connection error
       socket.on('connect_error', (error) => {
         connectionStatus.classList.remove('status-connected');
         statusText.textContent = 'Connection Error';
-        
+
         // Add error event to log
         if (eventLog) {
           addEventLogEntry('Connection error occurred');
         }
       });
-      
+
       // Command confirmation
       socket.on('command-received', (data) => {
         // Command received
       });
-      
+
       // Button events for event log
       socket.on('button-event', (data) => {
         if (data && data.message) {
           addEventLogEntry(data.message);
-          
+
           // Check if this is a music-related event from the API
           if (data.message.includes('Music') && data.message.includes('via API')) {
             // Update toggle state based on the message
@@ -714,36 +762,36 @@
           }
         }
       });
-      
+
       // Add a pinger to keep connection alive
       setInterval(() => {
         if (socket.connected) {
           socket.emit('ping', { timestamp: Date.now() });
         }
       }, 30000);
-      
+
       // Regular tree status updates
       socket.on('tree-status', (data) => {
         // If we get a webcam status, update the toggle
         if (data && data.webcamReady) {
           // Enable webcam toggle
           webcamToggle.disabled = false;
-          
+
           // Set the toggle state based on current streaming status
           webcamToggle.checked = webcamStreamingEnabled;
         }
       });
-      
+
       // Handle tree state events
       const handleTreeState = (data) => {
         updateUIFromTreeState(data);
       };
-      
+
       // Add event listeners for state event names
       socket.on('tree-state', handleTreeState);
       socket.on('state', handleTreeState);
       socket.on('current-state', handleTreeState);
-      
+
       // Function to update UI from state data
       function updateUIFromTreeState(data) {
         // Update UI based on tree's current state
@@ -755,24 +803,24 @@
             eyesClosedStatus.textContent = eyesClosed ? 'Currently closed' : 'Currently open';
             blinkBtn.disabled = eyesClosed;
           }
-          
+
           // Update auto blink state
           if (data.autoBlinkEnabled !== undefined) {
             autoBlinkEnabled = data.autoBlinkEnabled;
             autoBlinkToggle.checked = autoBlinkEnabled;
           }
-          
+
           // Update blink speed
           if (data.blinkSpeed !== undefined) {
             blinkSpeed.value = data.blinkSpeed;
             blinkSpeedValue.textContent = `${data.blinkSpeed} sec`;
           }
-          
+
           // Update look around state
           if (data.lookingAround !== undefined) {
             isLookingAround = data.lookingAround;
             lookAroundToggle.checked = isLookingAround;
-            
+
             // Start or stop look around based on current state
             if (isLookingAround && !lookAroundInterval) {
               startLookAround();
@@ -784,34 +832,34 @@
               }
             }
           }
-          
+
           // Update magic glimmer state
           if (data.magicGlimmerEnabled !== undefined) {
             magicGlimmerEnabled = data.magicGlimmerEnabled;
             magicToggle.checked = magicGlimmerEnabled;
           }
-          
+
           // Update magic settings
           if (data.magicSize !== undefined) {
             magicSize.value = data.magicSize;
             magicSizeValue.textContent = data.magicSize;
           }
-          
+
           if (data.magicSpeed !== undefined) {
             magicSpeed.value = data.magicSpeed;
             magicSpeedValue.textContent = data.magicSpeed;
           }
-          
+
           if (data.magicAmount !== undefined) {
             magicAmount.value = data.magicAmount;
             magicAmountValue.textContent = data.magicAmount;
           }
-          
+
           if (data.magicSoundEnabled !== undefined) {
             magicSoundEnabled = data.magicSoundEnabled;
             magicSoundToggle.checked = data.magicSoundEnabled;
           }
-          
+
           // Update eye position
           if (data.eyeX !== undefined && data.eyeY !== undefined) {
             const x = data.eyeX;
@@ -823,20 +871,20 @@
             targetEyeX = x;
             targetEyeY = y;
           }
-          
+
           // Update gate states
           if (data.gate1Open !== undefined) {
             gateOpen = data.gate1Open;
             gate1Toggle.checked = gateOpen;
             gate1Status.textContent = gateOpen ? 'Currently open' : 'Currently closed';
           }
-          
+
           if (data.gate2Open !== undefined) {
             gate2Open = data.gate2Open;
             gate2Toggle.checked = gate2Open;
             gate2Status.textContent = gate2Open ? 'Currently open' : 'Currently closed';
           }
-          
+
           // Update music state
           if (data.musicEnabled !== undefined) {
             musicEnabled = data.musicEnabled;
@@ -845,65 +893,65 @@
           }
         }
       }
-      
+
       // Webcam frame received
       socket.on('webcam-frame', (data) => {
         if (!data || !data.frame) {
           return;
         }
-        
+
         // Update the webcam display with the received frame
         webcamDisplay.src = data.frame;
-        
+
         // Show the image and hide the overlay if this is the first frame
         if (!webcamActive) {
           webcamActive = true;
           webcamOverlay.style.display = 'none';
           webcamStatus.textContent = 'Connected';
           webcamStatus.style.color = '#4CAF50';
-          
+
           // Update the toggle state since we're receiving frames
           webcamStreamingEnabled = true;
           webcamToggle.checked = true;
         }
-        
+
         // Update timestamp to track frame freshness
         lastFrameTimestamp = data.timestamp || Date.now();
       });
     }
-    
+
     // Eye control pad
     eyePad.addEventListener('mousedown', startEyeControl);
     eyePad.addEventListener('mousemove', moveEyes);
     eyePad.addEventListener('mouseup', stopEyeControl);
     eyePad.addEventListener('mouseleave', stopEyeControl);
-    
+
     let isControllingEyes = false;
-    
+
     function startEyeControl(e) {
       isControllingEyes = true;
       updateEyePosition(e);
     }
-    
+
     function moveEyes(e) {
       if (isControllingEyes) {
         updateEyePosition(e);
       }
     }
-    
+
     function stopEyeControl() {
       isControllingEyes = false;
     }
-    
+
     function updateEyePosition(e) {
       const rect = eyePad.getBoundingClientRect();
       const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
       const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-      
+
       // Update cursor position
       eyeCursor.style.left = `${x}%`;
       eyeCursor.style.top = `${y}%`;
-      
+
       // Send command to server
       if (socket && socket.connected) {
         socket.emit('tree-command', {
@@ -913,7 +961,7 @@
         });
       }
     }
-    
+
     // Blink button
     blinkBtn.addEventListener('click', () => {
       if (socket && socket.connected && !eyesClosed) {
@@ -922,44 +970,44 @@
         });
       }
     });
-    
+
     // Reset eyes button
     resetEyesBtn.addEventListener('click', () => {
       if (socket && socket.connected) {
         // Center the cursor on the eye pad
         eyeCursor.style.left = '50%';
         eyeCursor.style.top = '50%';
-        
+
         // Send command to reset eye position
         socket.emit('tree-command', {
           type: 'eyePosition',
           x: 50,
           y: 50
         });
-        
+
         // If eyes were closed, open them
         if (eyesClosed) {
           eyesClosed = false;
           eyesClosedToggle.checked = false;
           eyesClosedStatus.textContent = 'Currently open';
-          
+
           socket.emit('tree-command', {
             type: 'openEyes'
           });
         }
       }
     });
-    
+
     // Auto-Blink toggle and speed control
     const autoBlinkToggle = document.getElementById('autoBlinkToggle');
     const blinkSpeed = document.getElementById('blinkSpeed');
     const blinkSpeedValue = document.getElementById('blinkSpeedValue');
-    
+
     // Update the blink speed value display when the slider changes
     blinkSpeed.addEventListener('input', () => {
       const seconds = blinkSpeed.value;
       blinkSpeedValue.textContent = `${seconds} sec`;
-      
+
       // Send the updated blink speed to the tree if auto-blink is enabled
       if (autoBlinkEnabled && socket && socket.connected) {
         socket.emit('tree-command', {
@@ -968,16 +1016,16 @@
         });
       }
     });
-    
+
     autoBlinkToggle.addEventListener('change', () => {
       autoBlinkEnabled = autoBlinkToggle.checked;
-      
+
       // If auto-blink is enabled but eyes are closed, open the eyes
       if (autoBlinkEnabled && eyesClosed) {
         eyesClosed = false;
         eyesClosedToggle.checked = false;
         eyesClosedStatus.textContent = 'Currently open';
-        
+
         blinkBtn.disabled = false;
 
         // Send command to open eyes
@@ -985,7 +1033,7 @@
           type: 'openEyes'
         });
       }
-      
+
       // Send command to tree
       if (socket && socket.connected) {
         socket.emit('tree-command', {
@@ -995,43 +1043,43 @@
         });
       }
     });
-    
+
     // Eyes closed toggle
     let eyesClosed = false;
     const eyesClosedToggle = document.getElementById('eyesClosedToggle');
     const eyesClosedStatus = document.getElementById('eyesClosedStatus');
-    
+
     eyesClosedToggle.addEventListener('change', () => {
       if (socket && socket.connected) {
         eyesClosed = eyesClosedToggle.checked;
-        
+
         // Update status text
         eyesClosedStatus.textContent = eyesClosed ? 'Currently closed' : 'Currently open';
-        
+
         // Update the blink button state
         blinkBtn.disabled = eyesClosed;
-        
+
         // If eyes are closed, auto-blink should be disabled
         if (eyesClosed && autoBlinkEnabled) {
           autoBlinkEnabled = false;
-          
+
           // Update auto-blink toggle
           document.getElementById('autoBlinkToggle').checked = false;
-          
+
           // Send command to disable auto-blink
           socket.emit('tree-command', {
             type: 'toggleAutoBlink',
             enabled: false
           });
         }
-        
+
         // Send the appropriate command
         socket.emit('tree-command', {
           type: eyesClosed ? 'closeEyes' : 'openEyes'
         });
       }
     });
-    
+
     // Auto look around toggle and speed control
     const lookAroundToggle = document.getElementById('lookAroundToggle');
     const lookAroundSpeed = document.getElementById('lookAroundSpeed');
@@ -1041,25 +1089,25 @@
     let targetEyeX = 50;
     let targetEyeY = 50;
     let eyeAnimationFrame = null;
-    
+
     // Update the speed value display when the slider changes
     lookAroundSpeed.addEventListener('input', () => {
       const seconds = lookAroundSpeed.value;
       lookAroundSpeedValue.textContent = `${seconds} sec`;
-      
+
       // If we're currently looking around, restart the interval with new timing
       if (isLookingAround) {
         clearInterval(lookAroundInterval);
         startLookAround();
       }
     });
-    
+
     // Animate eye movement smoothly
     function animateEyeMovement() {
       // Calculate distance between current and target
       const dx = targetEyeX - currentEyeX;
       const dy = targetEyeY - currentEyeY;
-      
+
       // If we're very close to the target, just snap to it
       if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
         currentEyeX = targetEyeX;
@@ -1067,15 +1115,15 @@
         eyeAnimationFrame = null;
         return;
       }
-      
+
       // Move 5% of the way to the target each frame (easing)
       currentEyeX += dx * 0.05;
       currentEyeY += dy * 0.05;
-      
+
       // Update cursor position
       eyeCursor.style.left = `${currentEyeX}%`;
       eyeCursor.style.top = `${currentEyeY}%`;
-      
+
       // Send command to server
       if (socket && socket.connected) {
         socket.emit('tree-command', {
@@ -1084,29 +1132,29 @@
           y: currentEyeY
         });
       }
-      
+
       // Continue animation
       eyeAnimationFrame = requestAnimationFrame(animateEyeMovement);
     }
-    
+
     function startLookAround() {
       // Get interval from slider (convert to milliseconds)
       const intervalSeconds = parseInt(lookAroundSpeed.value);
       const intervalMs = intervalSeconds * 1000;
-      
+
       lookAroundInterval = setInterval(() => {
         // Don't start new eye movement if eyes are closed
         if (eyesClosed) return;
-        
+
         // Set new random target
         targetEyeX = Math.random() * 100;
         targetEyeY = Math.random() * 100;
-        
+
         // Start animation if not already running
         if (!eyeAnimationFrame) {
           eyeAnimationFrame = requestAnimationFrame(animateEyeMovement);
         }
-        
+
         // Occasionally blink, but only if auto-blinking is also enabled
         if (Math.random() < 0.3 && !eyesClosed && autoBlinkEnabled) {
           setTimeout(() => {
@@ -1119,21 +1167,21 @@
         }
       }, intervalMs);
     }
-    
+
     lookAroundToggle.addEventListener('change', () => {
       isLookingAround = lookAroundToggle.checked;
-      
+
       if (isLookingAround) {
         // Initialize current position to wherever the eyes currently are
         const eyeRect = eyeCursor.getBoundingClientRect();
         const padRect = eyePad.getBoundingClientRect();
-        currentEyeX = ((eyeRect.left + eyeRect.width/2) - padRect.left) / padRect.width * 100;
-        currentEyeY = ((eyeRect.top + eyeRect.height/2) - padRect.top) / padRect.height * 100;
-        
+        currentEyeX = ((eyeRect.left + eyeRect.width / 2) - padRect.left) / padRect.width * 100;
+        currentEyeY = ((eyeRect.top + eyeRect.height / 2) - padRect.top) / padRect.height * 100;
+
         startLookAround();
       } else {
         clearInterval(lookAroundInterval);
-        
+
         // Cancel any ongoing animation
         if (eyeAnimationFrame) {
           cancelAnimationFrame(eyeAnimationFrame);
@@ -1141,20 +1189,20 @@
         }
       }
     });
-    
+
     // Speak button - speaks exactly what's typed without AI processing
     speakBtn.addEventListener('click', () => {
       const text = speechText.value.trim();
       if (text && socket && socket.connected) {
         speakBtn.disabled = true;
         speakBtn.textContent = 'Speaking...';
-        
+
         // Send the text directly to the tree without any processing
         socket.emit('tree-command', {
           type: 'speak',
           text: text
         });
-        
+
         // Re-enable button after a short delay
         setTimeout(() => {
           speakBtn.disabled = false;
@@ -1162,7 +1210,7 @@
         }, 500);
       }
     });
-    
+
     // Stop button
     stopBtn.addEventListener('click', () => {
       if (socket && socket.connected) {
@@ -1171,7 +1219,7 @@
         });
       }
     });
-    
+
     // Quick phrases
     const quickPhrases = document.querySelectorAll('.quick-phrase');
     quickPhrases.forEach(phrase => {
@@ -1179,7 +1227,7 @@
         speechText.value = phrase.textContent;
       });
     });
-    
+
     // Magic glimmer toggle and settings
     const magicToggle = document.getElementById('magicToggle');
     const magicSize = document.getElementById('magicSize');
@@ -1190,47 +1238,47 @@
     const magicAmountValue = document.getElementById('magicAmountValue');
     const magicSoundToggle = document.getElementById('magicSoundToggle');
     let magicSoundEnabled = false;
-    
+
     // Magic sound effect buttons
     const magic1SoundButton = document.getElementById('magic1Sound');
     const magic2SoundButton = document.getElementById('magic2Sound');
     const twinkleSoundButton = document.getElementById('twinkleSound');
-    
+
     // Update the magic size value when the slider changes
     magicSize.addEventListener('input', () => {
       const size = magicSize.value;
       magicSizeValue.textContent = size;
-      
+
       // Update magic settings if enabled
       updateMagicSettings();
     });
-    
+
     // Update the magic speed value when the slider changes
     magicSpeed.addEventListener('input', () => {
       const speed = magicSpeed.value;
       magicSpeedValue.textContent = speed;
-      
+
       // Update magic settings if enabled
       updateMagicSettings();
     });
-    
+
     // Update the magic amount value when the slider changes
     magicAmount.addEventListener('input', () => {
       const amount = magicAmount.value;
       magicAmountValue.textContent = amount;
-      
+
       // Update magic settings if enabled
       updateMagicSettings();
     });
-    
+
     // Event listener for magic sound toggle
     magicSoundToggle.addEventListener('change', () => {
       magicSoundEnabled = magicSoundToggle.checked;
-      
+
       // Update settings if magic is enabled
       updateMagicSettings();
     });
-    
+
     // Helper function to update magic settings
     function updateMagicSettings() {
       if (magicGlimmerEnabled && socket && socket.connected) {
@@ -1243,11 +1291,11 @@
         });
       }
     }
-    
+
     magicToggle.addEventListener('change', () => {
       if (socket && socket.connected) {
         magicGlimmerEnabled = magicToggle.checked;
-        
+
         // Send command to toggle magic glimmer with current settings
         socket.emit('tree-command', {
           type: 'toggleMagic',
@@ -1259,7 +1307,7 @@
         });
       }
     });
-    
+
     // Add event listeners for the magic sound buttons
     magic1SoundButton.addEventListener('click', () => {
       if (socket && socket.connected) {
@@ -1269,7 +1317,7 @@
         });
       }
     });
-    
+
     magic2SoundButton.addEventListener('click', () => {
       if (socket && socket.connected) {
         socket.emit('tree-command', {
@@ -1278,7 +1326,7 @@
         });
       }
     });
-    
+
     twinkleSoundButton.addEventListener('click', () => {
       if (socket && socket.connected) {
         socket.emit('tree-command', {
@@ -1287,32 +1335,32 @@
         });
       }
     });
-    
+
     // Webcam toggle
     const webcamToggle = document.getElementById('webcamToggle');
-    
+
     webcamToggle.addEventListener('change', () => {
       if (socket && socket.connected) {
         webcamStreamingEnabled = webcamToggle.checked;
-        
+
         if (webcamStreamingEnabled) {
           // Start webcam streaming
           webcamOverlay.style.display = 'flex';
           webcamOverlay.textContent = 'Starting webcam feed...';
           webcamStatus.textContent = 'Starting...';
           webcamStatus.style.color = '#666';
-          
+
           // Send command to start webcam
           socket.emit('tree-command', {
             type: 'webcam-control',
             action: 'start'
           });
-          
+
           // Request a frame right away
           socket.emit('tree-command', {
             type: 'webcam-refresh'
           });
-          
+
           // Set a timeout to check if we received a frame
           setTimeout(() => {
             if (!webcamActive) {
@@ -1330,7 +1378,7 @@
             type: 'webcam-control',
             action: 'stop'
           });
-          
+
           // Update UI
           webcamActive = false;
           webcamDisplay.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -1341,7 +1389,7 @@
         }
       }
     });
-    
+
     // Refresh webcam button
     refreshWebcamBtn.addEventListener('click', () => {
       if (socket && socket.connected) {
@@ -1352,12 +1400,12 @@
         webcamOverlay.textContent = 'Requesting webcam feed...';
         webcamStatus.textContent = 'Refreshing...';
         webcamStatus.style.color = '#666';
-        
+
         // Request a fresh frame
         socket.emit('tree-command', {
           type: 'webcam-refresh'
         });
-        
+
         // Set a timeout to check if we received a new frame
         setTimeout(() => {
           if (!webcamActive) {
@@ -1368,12 +1416,12 @@
         }, 5000);
       }
     });
-    
+
     // Check if frames are stale
     function checkFrameFreshness() {
       const now = Date.now();
       const freshnessDuration = 10000; // 10 seconds
-      
+
       // Only check for stale frames if we're supposed to be streaming
       if (webcamStreamingEnabled && webcamActive && now - lastFrameTimestamp > freshnessDuration) {
         // Frame is stale
@@ -1382,45 +1430,308 @@
         webcamOverlay.textContent = 'Webcam feed lost';
         webcamStatus.textContent = 'Connection lost';
         webcamStatus.style.color = '#d32f2f';
-        
+
         // Update toggle to reflect lost connection
         webcamToggle.checked = false;
         webcamStreamingEnabled = false;
       }
     }
-    
+
     // Check frame freshness periodically
     setInterval(checkFrameFreshness, 5000);
-    
+
+    // Record webcam button handler
+    recordWebcamBtn.addEventListener('click', async () => {
+      if (!webcamActive || !webcamStreamingEnabled) {
+        addEventLogEntry('Cannot record: Webcam not active');
+        return;
+      }
+
+      try {
+        if (!webcamRecording) {
+          // Start recording
+          recordWebcamBtn.textContent = 'Recording...';
+          recordWebcamBtn.style.backgroundColor = '#B71C1C';
+
+          // Start audio capture
+          await startAudioCapture();
+
+          const response = await fetch('/api/webcam/record/start', {
+            method: 'POST'
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            webcamRecording = true;
+            addEventLogEntry(`Started recording: ${result.file}`);
+          } else {
+            addEventLogEntry(`Failed to start recording: ${result.message}`);
+            recordWebcamBtn.textContent = 'Start Recording';
+            recordWebcamBtn.style.backgroundColor = '#F44336';
+            stopAudioCapture();
+          }
+        } else {
+          // Stop recording
+          const response = await fetch('/api/webcam/record/stop', {
+            method: 'POST'
+          });
+
+          const result = await response.json();
+
+          // Stop audio capture
+          stopAudioCapture();
+
+          if (result.success) {
+            webcamRecording = false;
+            addEventLogEntry(`Stopped recording: ${result.file} (${result.frameCount} frames)`);
+            if (result.processingTime) {
+              addEventLogEntry(`Processing video... This may take ${result.processingTime}`);
+            }
+            recordWebcamBtn.textContent = 'Start Recording';
+            recordWebcamBtn.style.backgroundColor = '#F44336';
+          } else {
+            addEventLogEntry(`Failed to stop recording: ${result.message}`);
+            webcamRecording = false;
+            recordWebcamBtn.textContent = 'Start Recording';
+            recordWebcamBtn.style.backgroundColor = '#F44336';
+          }
+        }
+      } catch (error) {
+        console.error('Error with webcam recording:', error);
+        addEventLogEntry('Error with webcam recording. See console for details.');
+        recordWebcamBtn.textContent = 'Start Recording';
+        recordWebcamBtn.style.backgroundColor = '#F44336';
+        webcamRecording = false;
+        stopAudioCapture();
+      }
+    });
+
+    // List recordings button handler
+    listRecordingsBtn.addEventListener('click', async () => {
+      try {
+        // Fetch the list of recordings
+        const response = await fetch('/api/webcam/recordings');
+        const result = await response.json();
+
+        if (result.success) {
+          // Create the recordings list HTML
+          let html = '';
+
+          if (result.recordings.length === 0) {
+            html = '<p>No recordings found.</p>';
+          } else {
+            html = '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<tr style="border-bottom: 1px solid #ddd; background-color: #f2f2f2;">';
+            html += '<th style="padding: 10px; text-align: left;">Recording</th>';
+            html += '<th style="padding: 10px; text-align: left;">Size</th>';
+            html += '<th style="padding: 10px; text-align: left;">Date</th>';
+            html += '<th style="padding: 10px; text-align: left;">Actions</th>';
+            html += '</tr>';
+
+            result.recordings.forEach(recording => {
+              const size = formatBytes(recording.size);
+              const date = new Date(recording.created).toLocaleString();
+
+              html += '<tr style="border-bottom: 1px solid #ddd;">';
+              html += `<td style="padding: 10px;">${recording.name}</td>`;
+              html += `<td style="padding: 10px;">${size}</td>`;
+              html += `<td style="padding: 10px;">${date}</td>`;
+              html += `<td style="padding: 10px;">`;
+              html += `<a href="/recordings/${recording.name}" download="${recording.name}" style="margin-right: 10px; color: #2196F3; text-decoration: none;">Download</a>`;
+              html += `<a href="/recordings/${recording.name}" target="_blank" style="color: #4CAF50; text-decoration: none;">View</a>`;
+              html += `</td>`;
+              html += '</tr>';
+            });
+
+            html += '</table>';
+          }
+
+          recordingsList.innerHTML = html;
+          recordingsModal.style.display = 'block';
+        } else {
+          addEventLogEntry(`Failed to list recordings: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Error listing recordings:', error);
+        addEventLogEntry('Error listing recordings. See console for details.');
+      }
+    });
+
+    // Close recordings modal
+    closeRecordingsModal.addEventListener('click', () => {
+      recordingsModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+      if (event.target === recordingsModal) {
+        recordingsModal.style.display = 'none';
+      }
+    });
+
+    // Helper to format file sizes
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    // Audio capture functions for webcam recording
+    async function startAudioCapture() {
+      try {
+        // Request access to the microphone
+        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // Create an audio context
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Create a source node from the microphone stream
+        const source = audioContext.createMediaStreamSource(audioStream);
+
+        // Create a processor node to handle audio data
+        const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+        // Connect the source to the processor
+        source.connect(processor);
+        // Connect the processor to the destination (required for the process event to fire)
+        processor.connect(audioContext.destination);
+
+        // Set up audio data buffer
+        let audioChunks = [];
+
+        // Handle audio processing
+        processor.onaudioprocess = (e) => {
+          if (webcamRecording) {
+            // Get the audio data
+            const inputData = e.inputBuffer.getChannelData(0);
+
+            // Store the audio data
+            audioChunks.push(new Float32Array(inputData));
+
+            // If we have enough chunks, send them to the server
+            if (audioChunks.length >= 10) { // Send about 1 second of audio
+              const audioData = convertFloat32ToBase64(audioChunks);
+
+              // Send the audio data to the server
+              if (socket && socket.connected) {
+                socket.emit('audio-data', { audio: audioData });
+              }
+
+              // Reset the chunks
+              audioChunks = [];
+            }
+          }
+        };
+
+        // Store the processor for later cleanup
+        audioRecorder = processor;
+
+        console.log('Audio capture started');
+        addEventLogEntry('Microphone activated for recording');
+      } catch (error) {
+        console.error('Error starting audio capture:', error);
+        addEventLogEntry('Failed to access microphone for recording');
+        audioContext = null;
+        audioStream = null;
+      }
+    }
+
+    function stopAudioCapture() {
+      try {
+        // Stop the audio context
+        if (audioContext) {
+          audioContext.close();
+          audioContext = null;
+        }
+
+        // Stop the audio stream
+        if (audioStream) {
+          audioStream.getTracks().forEach(track => track.stop());
+          audioStream = null;
+        }
+
+        // Clear the processor
+        audioRecorder = null;
+
+        console.log('Audio capture stopped');
+      } catch (error) {
+        console.error('Error stopping audio capture:', error);
+      }
+    }
+
+    // Helper to convert Float32Array audio data to base64
+    function convertFloat32ToBase64(chunks) {
+      // Calculate total length
+      let totalLength = 0;
+      chunks.forEach(chunk => {
+        totalLength += chunk.length;
+      });
+
+      // Create a single buffer with all chunks
+      const audioBuffer = new Float32Array(totalLength);
+      let offset = 0;
+
+      chunks.forEach(chunk => {
+        audioBuffer.set(chunk, offset);
+        offset += chunk.length;
+      });
+
+      // Convert to 16-bit PCM
+      const pcmBuffer = new Int16Array(audioBuffer.length);
+      for (let i = 0; i < audioBuffer.length; i++) {
+        // Convert Float32 to Int16
+        pcmBuffer[i] = Math.max(-32768, Math.min(32767, audioBuffer[i] * 32767));
+      }
+
+      // Convert to Base64 - browser-safe approach
+      // First, create a Uint8Array from the ArrayBuffer
+      const uint8Array = new Uint8Array(pcmBuffer.buffer);
+
+      // Convert to base64 using btoa and a manual conversion
+      let binary = '';
+      uint8Array.forEach(byte => {
+        binary += String.fromCharCode(byte);
+      });
+
+      return btoa(binary);
+    }
+
     // Gate 1 toggle switch
     const gate1Toggle = document.getElementById('gate1Toggle');
     const gate1Status = document.getElementById('gate1Status');
-    
+
     gate1Toggle.addEventListener('change', async () => {
       // Get the current state from the toggle
       gateOpen = gate1Toggle.checked;
-      
+
       // Update status display
       gate1Status.textContent = gateOpen ? 'Currently open' : 'Currently closed';
-      
+
       // Disable toggle during request
       gate1Toggle.disabled = true;
-      
+
       try {
         // Set the angle based on gate state
         const angle = gateOpen ? 180 : 0;
-        
+
         // Make API request to servo controller
         const url = 'http://192.168.1.40/servo';
         const options = {
           method: 'POST',
-          headers: {'content-type': 'application/json'},
+          headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ angle })
         };
-        
+
         const response = await fetch(url, options);
         const data = await response.json();
-        
+
       } catch (error) {
         // Restore previous state on error
         gate1Toggle.checked = !gateOpen;
@@ -1435,36 +1746,36 @@
         gate1Toggle.disabled = false;
       }
     });
-    
+
     // Gate 2 toggle switch
     const gate2Toggle = document.getElementById('gate2Toggle');
     const gate2Status = document.getElementById('gate2Status');
-    
+
     gate2Toggle.addEventListener('change', async () => {
       // Get the current state from the toggle
       gate2Open = gate2Toggle.checked;
-      
+
       // Update status display
       gate2Status.textContent = gate2Open ? 'Currently open' : 'Currently closed';
-      
+
       // Disable toggle during request
       gate2Toggle.disabled = true;
-      
+
       try {
         // Set the action based on gate state
         const action = gate2Open ? 'open' : 'close';
-        
+
         // Make API request to motor controller
         const url = 'http://192.168.1.40/motor';
         const options = {
           method: 'POST',
-          headers: {'content-type': 'application/json'},
+          headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ action })
         };
-        
+
         const response = await fetch(url, options);
         const data = await response.json();
-        
+
       } catch (error) {
         // Restore previous state on error
         gate2Toggle.checked = !gate2Open;
@@ -1479,26 +1790,26 @@
         gate2Toggle.disabled = false;
       }
     });
-    
+
     // Music player toggle switch
     musicToggle.addEventListener('change', () => {
       // Get the current state from the toggle
       musicEnabled = musicToggle.checked;
-      
+
       // Update status display
       musicStatus.textContent = musicEnabled ? 'Currently playing' : 'Currently off';
-      
+
       // Send command to server via socket
       if (socket && socket.connected) {
         socket.emit('tree-command', {
           type: 'toggleMusic',
           enabled: musicEnabled
         });
-        
+
         // Log the event
         addEventLogEntry(`Music ${musicEnabled ? 'started' : 'stopped'}`);
       }
-      
+
       // Also update server state via API to keep it in sync
       fetch('/api/button', {
         method: 'POST',
@@ -1513,18 +1824,18 @@
         console.error('Error updating server state:', error);
       });
     });
-    
+
     // Function to request initial state
     function syncInitialState() {
       if (socket && socket.connected) {
         socket.emit('get-tree-state');
       }
     }
-    
+
     // Preview audio toggle handler
     previewAudioToggle.addEventListener('change', () => {
       previewNoAudio = previewAudioToggle.checked;
-      
+
       // Send command to update skipAudio flag via socket
       if (socket && socket.connected) {
         socket.emit('tree-command', {
@@ -1533,20 +1844,21 @@
         });
       }
     });
-    
+
     // Function to add an entry to the event log
     function addEventLogEntry(message) {
       const timestamp = new Date().toLocaleTimeString();
       const logEntry = document.createElement('div');
       logEntry.innerHTML = `<span style="color: #777;">[${timestamp}]</span> ${message}`;
       eventLog.appendChild(logEntry);
-      
+
       // Auto-scroll to bottom
       eventLog.scrollTop = eventLog.scrollHeight;
     }
-    
+
     // Initialize
     connectSocket();
   </script>
 </body>
+
 </html>

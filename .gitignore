@@ -8,3 +8,5 @@ coverage
 workingfiles
 cache/*.mp3
 certs/*.pem
+recordings/*.mp4
+frames/*/*.jpg
