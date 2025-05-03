@@ -166,7 +166,7 @@
     .right-column {
       width: 450px;
       position: sticky;
-      top: 20px;
+      top: 10px;
       align-self: flex-start;
     }
     
@@ -198,7 +198,7 @@
     }
     
     .control-section {
-      margin-bottom: 30px;
+      margin-bottom: 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
       padding: 15px;
@@ -499,6 +499,10 @@
             <div class="toggle-label">Camera Feed</div>
             <div class="toggle-description" id="webcamStatus">Not connected</div>
           </div>
+
+          <div class="buttons" style="margin-left: 50px; margin-top: 0;">
+            <button id="refreshWebcamBtn" style="background-color: #607d8b;">Refresh Feed</button>
+          </div>
         </div>
         
         <div class="webcam-container" style="width: 100%; position: relative; margin-top: 10px;">
@@ -508,9 +512,7 @@
           </div>
         </div>
         
-        <div class="buttons" style="margin-top: 10px; display: flex; justify-content: flex-end;">
-          <button id="refreshWebcamBtn" style="background-color: #607d8b;">Refresh Feed</button>
-        </div>
+        
       </div>
       
       <div class="control-section">
@@ -527,6 +529,13 @@
         </div>
         <div class="tree-preview-container" style="width: 100%; height: 300px; border-radius: 5px; border: 1px solid #ddd; overflow: hidden; position: relative;">
           <iframe id="treePreview" src="/better.html?noaudio=1&skipOverlay=1" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <div class="section-title">Event Log</div>
+        <div id="eventLog" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 0.9rem; background-color: #f9f9f9;">
+          <!-- Event logs will appear here -->
         </div>
       </div>
     </div>
@@ -549,6 +558,7 @@
     const stopBtn = document.getElementById('stopBtn');
     // No longer using the useAI checkbox
     const phrasesContainer = document.getElementById('phrasesContainer');
+    const eventLog = document.getElementById('eventLog');
     
     // Webcam elements
     const webcamDisplay = document.getElementById('webcamDisplay');
@@ -594,6 +604,11 @@
         connectionStatus.classList.add('status-connected');
         statusText.textContent = 'Connected';
         
+        // Add connection event to log
+        if (eventLog) {
+          addEventLogEntry('Connected to server');
+        }
+        
         // Send a test message to verify connection is working
         socket.emit('test-message', { client: 'control', timestamp: Date.now() });
         
@@ -605,17 +620,34 @@
       socket.on('disconnect', () => {
         connectionStatus.classList.remove('status-connected');
         statusText.textContent = 'Disconnected';
+        
+        // Add disconnection event to log
+        if (eventLog) {
+          addEventLogEntry('Disconnected from server');
+        }
       });
       
       // Connection error
       socket.on('connect_error', (error) => {
         connectionStatus.classList.remove('status-connected');
         statusText.textContent = 'Connection Error';
+        
+        // Add error event to log
+        if (eventLog) {
+          addEventLogEntry('Connection error occurred');
+        }
       });
       
       // Command confirmation
       socket.on('command-received', (data) => {
         // Command received
+      });
+      
+      // Button events for event log
+      socket.on('button-event', (data) => {
+        if (data && data.message) {
+          addEventLogEntry(data.message);
+        }
       });
       
       // Add a pinger to keep connection alive
@@ -1395,6 +1427,17 @@
         });
       }
     });
+    
+    // Function to add an entry to the event log
+    function addEventLogEntry(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.innerHTML = `<span style="color: #777;">[${timestamp}]</span> ${message}`;
+      eventLog.appendChild(logEntry);
+      
+      // Auto-scroll to bottom
+      eventLog.scrollTop = eventLog.scrollHeight;
+    }
     
     // Initialize
     connectSocket();

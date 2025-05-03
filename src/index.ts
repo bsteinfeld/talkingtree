@@ -197,6 +197,15 @@ io.on('connection', (socket) => {
     // Broadcast the status update to all clients
     io.emit('tree-status', data);
   });
+  
+  // Handle event logging
+  socket.on('log-event', (data) => {
+    if (data && data.message) {
+      console.log('Event log message:', data.message);
+      // Broadcast the event log to all clients
+      io.emit('button-event', { message: data.message });
+    }
+  });
 });
 
 // Make io available to routes

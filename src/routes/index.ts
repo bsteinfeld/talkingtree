@@ -22,6 +22,32 @@ router.get('/health', (req, res) => {
   res.json({ message: 'TalkingTree API is running' });
 });
 
+// Button press endpoint - adds an event to the event log
+router.post('/button', (req, res) => {
+  try {
+    // Get the button data
+    const { button, action } = req.body;
+    
+    // Default message if none provided
+    const message = req.body.message || `Button ${button || 'unknown'} ${action || 'pressed'}`;
+    
+    // Get the socket.io instance
+    const io = req.app.get('socketio');
+    
+    // Emit the button event to all connected clients
+    if (io) {
+      io.emit('button-event', { message });
+      console.log('Button event emitted:', message);
+    }
+    
+    // Return success response
+    res.status(200).json({ success: true, message });
+  } catch (error) {
+    console.error('Error handling button event:', error);
+    res.status(500).json({ success: false, error: 'Failed to process button event' });
+  }
+});
+
 // Process speech with AI before sending to the tree
 router.post('/process-speech', async (req, res) => {
   try {
