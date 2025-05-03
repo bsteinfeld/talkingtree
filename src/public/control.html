@@ -491,10 +491,9 @@
               <div class="toggle-label">Gate 1</div>
               <div class="toggle-description" id="gate1Status">Currently closed</div>
             </div>
-          </div>
-          
-          <div class="toggle-container">
-            <label class="toggle-switch" style="background-color: #2196F3;">
+
+            
+            <label class="toggle-switch" style="margin-left: 50px; background-color: #2196F3;">
               <input type="checkbox" id="gate2Toggle">
               <span class="toggle-slider"></span>
             </label>
@@ -633,6 +632,23 @@
         reconnectionDelay: 1000,
         timeout: 20000
       });
+      
+      // Fetch current server state
+      fetch('/api/state')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.state) {
+            // Update music toggle based on server state
+            if (data.state.musicEnabled !== undefined) {
+              musicEnabled = data.state.musicEnabled;
+              musicToggle.checked = musicEnabled;
+              musicStatus.textContent = musicEnabled ? 'Currently playing' : 'Currently off';
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching server state:', error);
+        });
 
       // Connection established
       socket.on('connect', () => {
@@ -682,6 +698,20 @@
       socket.on('button-event', (data) => {
         if (data && data.message) {
           addEventLogEntry(data.message);
+          
+          // Check if this is a music-related event from the API
+          if (data.message.includes('Music') && data.message.includes('via API')) {
+            // Update toggle state based on the message
+            if (data.message.includes('started')) {
+              musicEnabled = true;
+              musicToggle.checked = true;
+              musicStatus.textContent = 'Currently playing';
+            } else if (data.message.includes('stopped')) {
+              musicEnabled = false;
+              musicToggle.checked = false;
+              musicStatus.textContent = 'Currently off';
+            }
+          }
         }
       });
       
@@ -1458,7 +1488,7 @@
       // Update status display
       musicStatus.textContent = musicEnabled ? 'Currently playing' : 'Currently off';
       
-      // Send command to server
+      // Send command to server via socket
       if (socket && socket.connected) {
         socket.emit('tree-command', {
           type: 'toggleMusic',
@@ -1468,6 +1498,20 @@
         // Log the event
         addEventLogEntry(`Music ${musicEnabled ? 'started' : 'stopped'}`);
       }
+      
+      // Also update server state via API to keep it in sync
+      fetch('/api/button', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          button: 'music',
+          action: musicEnabled ? 'on' : 'off'
+        })
+      }).catch(error => {
+        console.error('Error updating server state:', error);
+      });
     });
     
     // Function to request initial state

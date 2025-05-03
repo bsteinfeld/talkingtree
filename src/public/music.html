@@ -121,6 +121,26 @@
         reconnectionDelay: 1000,
         timeout: 20000
       });
+      
+      // Fetch current server state
+      fetch('/api/state')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.state) {
+            // Check if music should be playing
+            if (data.state.musicEnabled !== undefined && data.state.musicEnabled) {
+              shouldBePlayingAudio = true;
+              if (audioActivated) {
+                startAudio();
+              } else {
+                statusText.textContent = 'Click Activate Button to Start Music';
+              }
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching server state:', error);
+        });
 
       // Connection established
       socket.on('connect', () => {
@@ -155,6 +175,31 @@
           } else {
             shouldBePlayingAudio = false;
             stopAudio();
+          }
+        }
+      });
+      
+      // Also listen for button-event messages to update UI
+      socket.on('button-event', (data) => {
+        if (data && data.message) {
+          // Check if the message is related to music
+          if (data.message.toLowerCase().includes('music')) {
+            // Update status text to reflect the event
+            const statusMsg = document.createElement('div');
+            statusMsg.textContent = data.message;
+            statusMsg.style.fontSize = '16px';
+            statusMsg.style.color = '#999';
+            statusMsg.style.marginTop = '10px';
+            
+            // Add to the status area temporarily
+            document.querySelector('.container').appendChild(statusMsg);
+            
+            // Remove after a few seconds
+            setTimeout(() => {
+              statusMsg.style.opacity = '0';
+              statusMsg.style.transition = 'opacity 1s';
+              setTimeout(() => statusMsg.remove(), 1000);
+            }, 5000);
           }
         }
       });

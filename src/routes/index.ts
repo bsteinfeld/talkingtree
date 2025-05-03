@@ -9,6 +9,11 @@ const router = Router();
 const watsonxService = new WatsonxService();
 const speechService = new SpeechService();
 
+// State tracking for toggleable features
+const appState = {
+  musicEnabled: false
+};
+
 // Cache directory for audio files
 const CACHE_DIR = path.join(__dirname, '..', '..', 'cache');
 
@@ -20,6 +25,14 @@ if (!fs.existsSync(CACHE_DIR)) {
 // API health check endpoint
 router.get('/health', (req, res) => {
   res.json({ message: 'TalkingTree API is running' });
+});
+
+// Get current state
+router.get('/state', (req, res) => {
+  res.json({ 
+    success: true,
+    state: appState
+  });
 });
 
 // Button press endpoint - adds an event to the event log
@@ -34,7 +47,43 @@ router.post('/button', (req, res) => {
     // Get the socket.io instance
     const io = req.app.get('socketio');
     
-    // Emit the button event to all connected clients
+    // Special handling for music button
+    if (button === 'music') {
+      // If an action is specified, use that to set the state, otherwise toggle
+      if (action === 'on' || action === 'play' || action === 'start') {
+        appState.musicEnabled = true;
+      } else if (action === 'off' || action === 'stop') {
+        appState.musicEnabled = false;
+      } else {
+        // No specific action, just toggle
+        appState.musicEnabled = !appState.musicEnabled;
+      }
+      
+      const newState = appState.musicEnabled;
+      
+      if (io) {
+        // Send command to toggle music
+        io.emit('tree-update', {
+          type: 'toggleMusic',
+          enabled: newState
+        });
+        
+        // Also emit regular button event for logging
+        io.emit('button-event', { 
+          message: `Music ${newState ? 'started' : 'stopped'} via API`
+        });
+        
+        console.log(`Music ${newState ? 'started' : 'stopped'} via API`);
+      }
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: `Music ${newState ? 'started' : 'stopped'}`,
+        musicEnabled: newState
+      });
+    }
+    
+    // Standard button event handling for other buttons
     if (io) {
       io.emit('button-event', { message });
       console.log('Button event emitted:', message);
