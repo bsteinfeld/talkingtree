@@ -7,7 +7,7 @@
   <style>
     body {
       margin: 0;
-      padding: 20px;
+      padding: 20px 60px 20px 80px;
       font-family: Arial, sans-serif;
       background-color: #f5f5f5;
       color: #333;
@@ -15,10 +15,23 @@
     }
     
     h1 {
-      text-align: center;
+      display: none;
+    }
+    
+    .vertical-header {
+      position: fixed;
+      left: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      text-orientation: upright;
       color: #2c8c2c;
-      margin-bottom: 10px;
-      margin-top: 10px;
+      font-size: 1.5rem;
+      letter-spacing: 0.3rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      font-weight: bold;
+      z-index: 100;
+      min-height: 75%
     }
     
     .header-status {
@@ -150,7 +163,7 @@
     .main-container {
       display: flex;
       flex-direction: row;
-      max-width: 1200px;
+      max-width: 1600px;
       margin: 0 auto;
       background-color: white;
       border-radius: 10px;
@@ -161,10 +174,19 @@
     .left-column {
       flex: 1;
       margin-right: 20px;
+      width: 600px
     }
     
     .right-column {
       width: 450px;
+      position: sticky;
+      top: 10px;
+      align-self: flex-start;
+      margin-right: 20px;
+    }
+    
+    .log-column {
+      width: 500px;
       position: sticky;
       top: 10px;
       align-self: flex-start;
@@ -198,7 +220,7 @@
     }
     
     .control-section {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       border: 1px solid #ddd;
       border-radius: 5px;
       padding: 15px;
@@ -267,7 +289,6 @@
     }
     
     textarea {
-      width: 100%;
       height: 100px;
       padding: 10px;
       border: 1px solid #ddd;
@@ -320,7 +341,7 @@
   </style>
 </head>
 <body>
-  <h1>🌳 Talking Tree Control Panel 🌳</h1>
+  <div class="vertical-header">🌳TALKING TREE CONTROL PANEL🌳</div>
   
   <div class="header-status">
     <div class="connection-status">
@@ -511,8 +532,6 @@
             Waiting for webcam feed...
           </div>
         </div>
-        
-        
       </div>
       
       <div class="control-section">
@@ -531,10 +550,12 @@
           <iframe id="treePreview" src="/better.html?noaudio=1&skipOverlay=1" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
       </div>
-
-      <div class="control-section">
+    </div>
+    
+    <div class="log-column">
+      <div class="control-section" style="height: calc(100% - 30px);">
         <div class="section-title">Event Log</div>
-        <div id="eventLog" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 0.9rem; background-color: #f9f9f9;">
+        <div id="eventLog" style="height: 600px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 0.9rem; background-color: #f9f9f9;">
           <!-- Event logs will appear here -->
         </div>
       </div>
