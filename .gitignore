@@ -6,7 +6,7 @@ coverage
 .npmrc
 
 workingfiles
-cache/*.mp3
+cache/**/*.mp3
 certs/*.pem
 recordings/*.mp4
 frames/*/*.jpg
