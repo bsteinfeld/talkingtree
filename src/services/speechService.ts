@@ -98,7 +98,8 @@ export class SpeechService {
 Tone: Magical, warm, and inviting, creating a sense of wonder and peace for listeners.
 Pacing: Steady and measured, with slight pauses to emphasize magical moments and wisdom.
 Emotion: Wonder, curiosity, and gentle wisdom, with a lighthearted and positive vibe throughout.
-Pronunciation: Clear and precise, with a slightly earthy, resonant quality to evoke the sense of an ancient, talking tree.`;
+Pronunciation: Clear and precise, with a slightly earthy, resonant quality to evoke the sense of an ancient, talking tree.
+Start off upbeat`;
 
 //           const instructions = `Delivery: Exaggerated and theatrical, with dramatic pauses, sudden outbursts, and gleeful cackling.
 

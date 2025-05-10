@@ -622,7 +622,7 @@
               <span class="toggle-slider"></span>
             </label>
             <div>
-              <div class="toggle-label">Key</div>
+              <div class="toggle-label">Gate</div>
               <div class="toggle-description" id="gate1Status">Currently closed</div>
             </div>
 
@@ -632,7 +632,7 @@
               <span class="toggle-slider"></span>
             </label>
             <div>
-              <div class="toggle-label">Gate 2</div>
+              <div class="toggle-label">Key</div>
               <div class="toggle-description" id="gate2Status">Currently closed</div>
             </div>
           </div>
@@ -1837,7 +1837,7 @@
 
       try {
         // Set the angle based on gate state
-        const angle = gateOpen ? 180 : 0;
+        const angle = gateOpen ? 180 : 90;
 
         // Make API request to servo controller
         const url = 'http://192.168.1.46/gate';
